@@ -136,7 +136,13 @@ func validateSignature(r *http.Request) bool {
 		return false
 	}
 
-	signature := []byte(r.Header.Get("x-signature-ed25519"))
+	signature, err := hex.DecodeString(r.Header.Get("x-signature-ed25519"))
+
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+
 	timestamp := r.Header.Get("x-signature-timestamp")
 
 	payload := []byte(timestamp + string(body))
