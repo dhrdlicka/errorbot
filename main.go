@@ -22,7 +22,11 @@ func main() {
 	applicationID = os.Getenv("DISCORD_APPLICATION_ID")
 	botToken = os.Getenv("DISCORD_BOT_TOKEN")
 
-	registerDiscordCommands()
+	err := registerDiscordCommands()
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
