@@ -2,7 +2,9 @@ package main
 
 import (
 	"bytes"
+	"crypto/ed25519"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -11,8 +13,9 @@ import (
 )
 
 var (
-	applicationID string
-	botToken      string
+	applicationID        string
+	applicationPublicKey ed25519.PublicKey
+	botToken             string
 )
 
 func main() {
@@ -20,6 +23,7 @@ func main() {
 
 	port := os.Getenv("PORT")
 	applicationID = os.Getenv("DISCORD_APPLICATION_ID")
+	applicationPublicKey = ed25519.PublicKey(os.Getenv("DISCORD_APPLICATION_PUBLIC_KEY"))
 	botToken = os.Getenv("DISCORD_BOT_TOKEN")
 
 	err := registerDiscordCommands()
@@ -81,6 +85,11 @@ func handleDiscordInteraction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !validateSignature(r) {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	var response discordgo.InteractionResponse
 
 	switch interaction.Type {
@@ -109,4 +118,20 @@ func handleDiscordInteraction(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("content-type", "application/json")
 	json.NewEncoder(w).Encode(response)
+}
+
+func validateSignature(r *http.Request) bool {
+	body, err := io.ReadAll(r.Body)
+
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+
+	signature := []byte(r.Header.Get("x-signature-ed25519"))
+	timestamp := r.Header.Get("x-signature-timestamp")
+
+	payload := []byte(timestamp + string(body))
+
+	return ed25519.Verify(applicationPublicKey, payload, signature)
 }
