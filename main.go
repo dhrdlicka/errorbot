@@ -22,7 +22,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	http.HandleFunc("/interactions", client.HandleDiscordRequest)
+	http.HandleFunc("POST /interactions", client.HandleDiscordRequest)
 
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
 }
