@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"crypto/ed25519"
+	"encoding/hex"
 	"encoding/json"
 	"io"
 	"log"
@@ -19,14 +20,21 @@ var (
 )
 
 func main() {
+	var err error
+
 	http.HandleFunc("/interactions", handleDiscordInteraction)
 
 	port := os.Getenv("PORT")
 	applicationID = os.Getenv("DISCORD_APPLICATION_ID")
-	applicationPublicKey = ed25519.PublicKey(os.Getenv("DISCORD_APPLICATION_PUBLIC_KEY"))
 	botToken = os.Getenv("DISCORD_BOT_TOKEN")
 
-	err := registerDiscordCommands()
+	applicationPublicKey, err = hex.DecodeString(os.Getenv("DISCORD_APPLICATION_PUBLIC_KEY"))
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = registerDiscordCommands()
 
 	if err != nil {
 		log.Fatal(err)
