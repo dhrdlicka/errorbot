@@ -46,11 +46,18 @@ func handleError(itx *tempest.CommandInteraction) {
 		return
 	}
 
-	code, err := strconv.ParseInt(itx.Data.Options[0].Value.(string), 0, 32)
+	value := itx.Data.Options[0].Value.(string)
+	code, err := strconv.ParseUint(value, 0, 32)
 
 	if err != nil {
-		slog.Error("failed to parse command option", err)
-		return
+		intCode, err := strconv.ParseInt(value, 0, 32)
+
+		if err != nil {
+			slog.Error("failed to parse command option", err)
+			return
+		}
+
+		code = uint64(intCode)
 	}
 
 	var response tempest.ResponseMessageData
