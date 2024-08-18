@@ -21,7 +21,7 @@ var BugCheckCommand = tempest.Command{
 			Required:    true,
 		},
 	},
-	SlashCommandHandler: handleError,
+	SlashCommandHandler: handleBugCheck,
 }
 
 func handleBugCheck(itx *tempest.CommandInteraction) {
