@@ -1,8 +1,8 @@
-package main
+package commands
 
 import tempest "github.com/Amatsagu/Tempest"
 
-var HelloCommand tempest.Command = tempest.Command{
+var HelloCommand = tempest.Command{
 	Name:                "hello",
 	Description:         "Hello World!",
 	SlashCommandHandler: handleHello,

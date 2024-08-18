@@ -6,6 +6,7 @@ import (
 	"os"
 
 	tempest "github.com/Amatsagu/Tempest"
+	"github.com/dhrdlicka/errorbot/commands"
 )
 
 func main() {
@@ -14,7 +15,7 @@ func main() {
 		Rest:      tempest.NewRestClient(os.Getenv("DISCORD_BOT_TOKEN")),
 	})
 
-	client.RegisterCommand(HelloCommand)
+	client.RegisterCommand(commands.HelloCommand)
 
 	err := client.SyncCommands(nil, nil, false)
 
