@@ -62,6 +62,8 @@ func handleError(itx *tempest.CommandInteraction) {
 
 	var response tempest.ResponseMessageData
 
+	var hasAnyMatch = false
+
 	matches := winerror.FindErrorCode(uint32(code), ntStatusList)
 
 	if len(matches) > 0 {
@@ -78,6 +80,8 @@ func handleError(itx *tempest.CommandInteraction) {
 		embed.Description = string(description)
 
 		response.Embeds = append(response.Embeds, &embed)
+
+		hasAnyMatch = true
 	}
 
 	matches = winerror.FindErrorCode(uint32(code), win32ErrorList)
@@ -96,6 +100,8 @@ func handleError(itx *tempest.CommandInteraction) {
 		embed.Description = string(description)
 
 		response.Embeds = append(response.Embeds, &embed)
+
+		hasAnyMatch = true
 	}
 
 	matches = winerror.FindErrorCode(uint32(code), hResultList)
@@ -114,6 +120,12 @@ func handleError(itx *tempest.CommandInteraction) {
 		embed.Description = string(description)
 
 		response.Embeds = append(response.Embeds, &embed)
+
+		hasAnyMatch = true
+	}
+
+	if !hasAnyMatch {
+		response.Content = fmt.Sprintf("Could not find error code %s (`0x%08X`)", value, code)
 	}
 
 	itx.SendReply(response, false, nil)
