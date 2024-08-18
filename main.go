@@ -15,7 +15,7 @@ func main() {
 		Rest:      tempest.NewRestClient(os.Getenv("DISCORD_BOT_TOKEN")),
 	})
 
-	client.RegisterCommand(commands.HelloCommand)
+	//client.RegisterCommand(commands.HelloCommand)
 	client.RegisterCommand(commands.ErrorCommand)
 
 	err := client.SyncCommands(nil, nil, false)
