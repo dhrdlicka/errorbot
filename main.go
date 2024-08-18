@@ -16,6 +16,7 @@ func main() {
 	})
 
 	client.RegisterCommand(commands.HelloCommand)
+	client.RegisterCommand(commands.ErrorCommand)
 
 	err := client.SyncCommands(nil, nil, false)
 
