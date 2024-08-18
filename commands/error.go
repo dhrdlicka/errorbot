@@ -47,7 +47,9 @@ func handleError(itx *tempest.CommandInteraction) {
 	}
 
 	value := itx.Data.Options[0].Value.(string)
-	code, err := strconv.ParseUint(value, 0, 32)
+	longCode, err := strconv.ParseUint(value, 0, 32)
+
+	code := uint32(longCode)
 
 	if err != nil {
 		intCode, err := strconv.ParseInt(value, 0, 32)
@@ -57,7 +59,7 @@ func handleError(itx *tempest.CommandInteraction) {
 			return
 		}
 
-		code = uint64(intCode)
+		code = uint32(intCode)
 	}
 
 	var response tempest.ResponseMessageData
