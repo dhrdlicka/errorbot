@@ -3,14 +3,17 @@ package winerror
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
 
 type BugCheck struct {
-	Code uint32 `yaml:"code"`
-	Name string `yaml:"name"`
-	URL  string `yaml:"url"`
+	Code        uint32   `yaml:"code"`
+	Name        string   `yaml:"name"`
+	URL         string   `yaml:"url"`
+	Description string   `yaml:"description"`
+	Parameters  []string `yaml:"parameters"`
 }
 
 func LoadBugChecks(name string) ([]BugCheck, error) {
@@ -43,5 +46,25 @@ func FindBugCheck(code uint32, bugChecks []BugCheck) []BugCheck {
 }
 
 func (bugCheck BugCheck) String() string {
-	return fmt.Sprintf("[`%s`](%s) (`0x%08X`)\n", bugCheck.Name, bugCheck.URL, bugCheck.Code)
+	description := fmt.Sprintf("`0x%08X`\n\n", bugCheck.Code)
+
+	if bugCheck.Description != "" {
+		description = fmt.Sprintf("%s## Description\n%s\n\n", description, bugCheck.Description)
+	}
+
+	if len(bugCheck.Parameters) > 0 {
+		description = fmt.Sprintf("%s## Parameters\n", description)
+		for i, item := range bugCheck.Parameters {
+			description = fmt.Sprintf("%s%d. ", description, i+1)
+			for j, line := range strings.Split(item, "\n") {
+				if j > 0 {
+					description = fmt.Sprintf("%s   ", description)
+				}
+
+				description = fmt.Sprintf("%s%s\n", description, line)
+			}
+		}
+	}
+
+	return description
 }

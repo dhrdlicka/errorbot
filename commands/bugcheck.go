@@ -53,7 +53,17 @@ func handleBugCheck(itx *tempest.CommandInteraction) {
 	matches := winerror.FindBugCheck(uint32(code), bugCheckList)
 
 	if len(matches) > 0 {
-		response.Content = fmt.Sprintln(matches[0])
+		embed := tempest.Embed{
+			Description: matches[0].String(),
+			Fields: []*tempest.EmbedField{
+				{
+					Name:  "Documentation",
+					Value: matches[0].URL,
+				},
+			},
+		}
+		response.Embeds = append(response.Embeds, &embed)
+
 	} else {
 		response.Content = fmt.Sprintf("Could not find bug check code %s (`0x%08X`)", value, code)
 	}
