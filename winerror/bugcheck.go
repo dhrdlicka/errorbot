@@ -46,14 +46,14 @@ func FindBugCheck(code uint32, bugChecks []BugCheck) []BugCheck {
 }
 
 func (bugCheck BugCheck) String() string {
-	description := fmt.Sprintf("`0x%08X`\n\n", bugCheck.Code)
+	description := fmt.Sprintf("`0x%08X`\n", bugCheck.Code)
 
 	if bugCheck.Description != "" {
-		description = fmt.Sprintf("%s## Description\n%s\n\n", description, bugCheck.Description)
+		description = fmt.Sprintf("%s#### Description\n%s\n", description, bugCheck.Description)
 	}
 
 	if len(bugCheck.Parameters) > 0 {
-		description = fmt.Sprintf("%s## Parameters\n", description)
+		description = fmt.Sprintf("%s#### Parameters\n", description)
 		for i, item := range bugCheck.Parameters {
 			description = fmt.Sprintf("%s%d. ", description, i+1)
 			for j, line := range strings.Split(item, "\n") {

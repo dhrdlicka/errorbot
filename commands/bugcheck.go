@@ -54,6 +54,7 @@ func handleBugCheck(itx *tempest.CommandInteraction) {
 
 	if len(matches) > 0 {
 		embed := tempest.Embed{
+			Title:       matches[0].Name,
 			Description: matches[0].String(),
 			Fields: []*tempest.EmbedField{
 				{
