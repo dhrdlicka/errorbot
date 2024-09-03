@@ -1,6 +1,15 @@
 - code: 0x00000001
   name: APC_INDEX_MISMATCH
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1--apc-index-mismatch
+  description: The bug check indicates a mismatch in the asynchronous procedure calls (APC) state index.
+  parameters:
+    - The address of the system function (system call) or worker routine.
+    - The value of the current thread's `ApcStateIndex` field
+    - "The value of current thread's `CombinedApcDisable` field. This field consists of two separate 16-bit fields: `(Thread->SpecialApcDisable << 16) | Thread->KernelApcDisable`."
+    - |-
+      Call type:
+      0 - System call
+      1 - Worker routine
 - code: 0x00000002
   name: DEVICE_QUEUE_NOT_BUSY
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x2--device-queue-not-busy
@@ -13,9 +22,16 @@
 - code: 0x00000005
   name: INVALID_PROCESS_ATTACH_ATTEMPT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x5--invalid-process-attach-attempt
+  description: This generally indicates that the thread was attached to a process in a situation where that is not allowed. For example, this bug check could occur if KeAttachProcess was called when the thread was already attached to a process (which is illegal), or if the thread returned from certain function calls in an attached state (which is invalid).
+  parameters:
+    - The pointer to the dispatcher object for the target process, or if the thread is already attached, the pointer to the object for the original process.
+    - The pointer to the dispatcher object of the process that the current thread is currently attached to.
+    - The value of the thread's APC state index.
+    - A non-zero value indicates that a DPC is running on the current processor.
 - code: 0x00000006
   name: INVALID_PROCESS_DETACH_ATTEMPT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x6--invalid-process-detach-attempt
+  description: This bug check can be caused by calling the KeStackAttachProcess routine and subsequently calling KeUnstackDetachProcess in the driver's implementation of the PLOAD_IMAGE_NOTIFY_ROUTINE callback function. The callback runs in a thread of the process in which the image loaded.
 - code: 0x00000007
   name: INVALID_SOFTWARE_INTERRUPT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x7--invalid-software-interrupt
@@ -28,21 +44,39 @@
 - code: 0x0000000A
   name: IRQL_NOT_LESS_OR_EQUAL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xa--irql-not-less-or-equal
+  description: This bug check indicates that Microsoft Windows or a kernel-mode driver accessed paged memory at an invalid address while at a raised interrupt request level (IRQL). The cause is typically a bad pointer or a pageability problem.
+  parameters:
+    - The virtual memory address that couldn't be accessed.
+    - IRQL at time of the fault.
+    - |-
+      Bit field that describes the operation that caused the fault.
+
+      Bit 0 values:
+      0 - Read operation
+      1 - Write operation
+
+      Bit 3 values:
+      0 - Not an execute operation
+      1 - Execute operation
+    - The instruction pointer at the time of the fault.
 - code: 0x0000000B
   name: NO_EXCEPTION_HANDLING_SUPPORT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xb--no-exception-handling-support
 - code: 0x0000000C
   name: MAXIMUM_WAIT_OBJECTS_EXCEEDED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xc--maximum-wait-objects-exceeded
+  description: This indicates that the current thread exceeded the permitted number of wait objects.
 - code: 0x0000000D
   name: MUTEX_LEVEL_NUMBER_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xd--mutex-level-number-violation
 - code: 0x0000000E
   name: NO_USER_MODE_CONTEXT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xe--no-user-mode-context
+  description: In the process of starting a system thread, if control returns from the initial thread procedure, a bug check will occur.
 - code: 0x0000000F
   name: SPIN_LOCK_ALREADY_OWNED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xf--spin-lock-already-owned
+  description: This indicates that a request for a spin lock has been initiated when the spin lock was already owned.
 - code: 0x00000010
   name: SPIN_LOCK_NOT_OWNED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x10--spin-lock-not-owned
@@ -52,9 +86,20 @@
 - code: 0x00000012
   name: TRAP_CAUSE_UNKNOWN
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x12--trap-cause-unknown
+  description: This indicates that an unknown exception has occurred.
+  parameters:
+    - |-
+      Type of TRAP_CAUSE_UNKNOWN
+      1 - Unexpected interrupt. (Parameter 2 – Interrupt Vector)
+      2 - Unknown floating point exception.
+      3 - The enabled and asserted status bits (see processor definition).
+    - Dependent on Arg1
+    - Reserved
+    - Reserved
 - code: 0x00000013
   name: EMPTY_THREAD_REAPER_LIST
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x13--empty-thread-reaper-list
+  description: This bug check is not currently used by Windows.
 - code: 0x00000014
   name: CREATE_DELETE_LOCK_NOT_LOCKED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x14--create-delete-lock-not-locked
@@ -70,51 +115,109 @@
 - code: 0x00000018
   name: REFERENCE_BY_POINTER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x18--reference-by-pointer
+  description: This indicates that the reference count of an object is illegal for the current state of the object.
+  parameters:
+    - Object type of the object whose reference count is being lowered.
+    - Object whose reference count is being lowered.
+    - Reserved
+    - Reserved
 - code: 0x00000019
   name: BAD_POOL_HEADER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x19--bad-pool-header
+  description: This indicates that a pool header is corrupt.
 - code: 0x0000001A
   name: MEMORY_MANAGEMENT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1a--memory-management
+  description: The bug check indicates that a severe memory management error occurred.
 - code: 0x0000001B
   name: PFN_SHARE_COUNT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1b--pfn-share-count
+  description: This bug check code is no longer used by the Windows operating system.
 - code: 0x0000001C
   name: PFN_REFERENCE_COUNT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1c--pfn-reference-count
+  description: "This indicates that a reference count error was detected. It can be caused by counter overflows, underflows, or an object that is used after it has been freed. Examine the stack to determine the fault. Note: This bug check code is used to report multiple types of reference count errors, not necessarily related to Memory Manager Page Frame Numbers (PFNs)."
 - code: 0x0000001D
   name: NO_SPIN_LOCK_AVAILABLE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1d--no-spin-lock-available
 - code: 0x0000001E
   name: KMODE_EXCEPTION_NOT_HANDLED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1e--kmode-exception-not-handled
+  description: The bug check indicates that a kernel-mode program generated an exception that the error handler didn't catch.
+  parameters:
+    - The exception code that wasn't handled.
+    - The address where the exception occurred.
+    - Exception information parameter 0 of the exception record.
+    - Exception information parameter 1 of the exception record.
 - code: 0x0000001F
   name: SHARED_RESOURCE_CONV_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1f--shared-resource-conv-error
 - code: 0x00000020
   name: KERNEL_APC_PENDING_DURING_EXIT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x20--kernel-apc-pending-during-exit
+  description: This indicates that an asynchronous procedure call (APC) was still pending when a thread exited.
+  parameters:
+    - The address of the APC found pending during exit
+    - The thread's APC disable count
+    - The current IRQL
+    - Reserved
 - code: 0x00000021
   name: QUOTA_UNDERFLOW
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x21--quota-underflow
+  description: This indicates that quota charges have been mishandled by returning more quota to a particular block than was previously charged.
+  parameters:
+    - The process that was initially charged, if available.
+    - The quota type. For the list of all possible quota type values, see the header file Ps.h in the Windows Driver Kit (WDK).
+    - The initial charged amount of quota to return.
+    - The remaining amount of quota that was not returned.
 - code: 0x00000022
   name: FILE_SYSTEM
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x22--file-system
 - code: 0x00000023
   name: FAT_FILE_SYSTEM
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x23--fat-file-system
+  description: This indicates that a problem occurred in the FAT file system.
+  parameters:
+    - Specifies source file and line number information. The high 16 bits (the first four hexadecimal digits after the "0x") identify the source file by its identifier number. The low 16 bits identify the source line in the file where the bug check occurred.
+    - If `FatExceptionFilter` is on the stack, this parameter specifies the address of the exception record.
+    - If `FatExceptionFilter` is on the stack, this parameter specifies the address of the context record.
+    - Reserved
 - code: 0x00000024
   name: NTFS_FILE_SYSTEM
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x24--ntfs-file-system
+  description: This indicates a problem occurred in ntfs.sys, the driver file that allows the system to read and write to NTFS drives.
+  parameters:
+    - Specifies source file and line number information. The high 16 bits (the first four hexadecimal digits after the "0x") identify the source file by its identifier number. The low 16 bits identify the source line in the file where the bug check occurred.
+    - If `NtfsExceptionFilter` is on the stack, this parameter specifies the address of the exception record.
+    - If `NtfsExceptionFilter` is on the stack, this parameter specifies the address of the context record.
+    - Reserved
 - code: 0x00000025
   name: NPFS_FILE_SYSTEM
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x25--npfs-file-system
+  description: This indicates that a problem occurred in the NPFS file system.
+  parameters:
+    - Specifies source file and line number information. The high 16 bits (the first four hexadecimal digits after the "0x") identify the source file by its identifier number. The low 16 bits identify the source line in the file where the bug check occurred.
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x00000026
   name: CDFS_FILE_SYSTEM
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x26--cdfs-file-system
+  description: This indicates that a problem occurred in the CD file system.
+  parameters:
+    - Specifies source file and line number information. The high 16 bits (the first four hexadecimal digits after the "0x") identify the source file by its identifier number. The low 16 bits identify the source line in the file where the bug check occurred.
+    - If `CdExceptionFilter` is on the stack, this parameter specifies the address of the exception record.
+    - If `CdExceptionFilter` is on the stack, this parameter specifies the address of the context record.
+    - Reserved
 - code: 0x00000027
   name: RDR_FILE_SYSTEM
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x27--rdr-file-system
+  description: This indicates that a problem occurred in the SMB redirector file system.
+  parameters:
+    - The high 16 bits (the first four hexadecimal digits after the "0x") identify the type of problem.
+    - If `RxExceptionFilter` is on the stack, this parameter specifies the address of the exception record.
+    - If `RxExceptionFilter` is on the stack, this parameter specifies the address of the context record.
+    - Reserved
 - code: 0x00000028
   name: CORRUPT_ACCESS_TOKEN
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x28--corrupt-access-token
@@ -124,9 +227,21 @@
 - code: 0x0000002A
   name: INCONSISTENT_IRP
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x2a--inconsistent-irp
+  description: This indicates that an IRP was found to contain inconsistent information.
+  parameters:
+    - The address of the IRP that was found to be inconsistent
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x0000002B
   name: PANIC_STACK_SWITCH
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x2b--panic-stack-switch
+  description: This indicates that the kernel mode stack was overrun.
+  parameters:
+    - The trap frame
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x0000002C
   name: PORT_DRIVER_INTERNAL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x2c--port-driver-internal
@@ -136,30 +251,67 @@
 - code: 0x0000002E
   name: DATA_BUS_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x2e--data-bus-error
+  description: This typically indicates that a parity error in system memory has been detected.
+  parameters:
+    - Virtual address that caused the fault
+    - Physical address that caused the fault
+    - Processor status register (PSR)
+    - Faulting instruction register (FIR)
 - code: 0x0000002F
   name: INSTRUCTION_BUS_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x2f--instruction-bus-error
 - code: 0x00000030
   name: SET_OF_INVALID_CONTEXT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x30--set-of-invalid-context
+  description: This indicates that the stack pointer in a trap frame had an invalid value.
+  parameters:
+    - The new stack pointer
+    - The old stack pointer
+    - The trap frame address
+    - "0"
 - code: 0x00000031
   name: PHASE0_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x31--phase0-initialization-failed
+  description: This indicates that system initialization failed.
 - code: 0x00000032
   name: PHASE1_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x32--phase1-initialization-failed
+  description: This indicates that system initialization failed.
+  parameters:
+    - The NT status code that describes why the system initialization failed
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x00000033
   name: UNEXPECTED_INITIALIZATION_CALL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x33--unexpected-initialization-call
 - code: 0x00000034
   name: CACHE_MANAGER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x34--cache-manager
+  description: This indicates that a problem occurred in the file system's cache manager.
+  parameters:
+    - Specifies source file and line number information. The high 16 bits (the first four hexadecimal digits after the "0x") identify the source file by its identifier number. The low 16 bits identify the source line in the file where the bug check occurred.
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x00000035
   name: NO_MORE_IRP_STACK_LOCATIONS
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x35--no-more-irp-stack-locations
+  description: This bug check occurs when the IoCallDriver packet has no more stack locations remaining.
+  parameters:
+    - Address of the IRP
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x00000036
   name: DEVICE_REFERENCE_COUNT_NOT_ZERO
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x36--device-reference-count-not-zero
+  description: This indicates that a driver attempted to delete a device object that still had a positive reference count.
+  parameters:
+    - The address of the device object
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x00000037
   name: FLOPPY_INTERNAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x37--floppy-internal-error
@@ -169,30 +321,64 @@
 - code: 0x00000039
   name: SYSTEM_EXIT_OWNED_MUTEX
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x39--system-exit-owned-mutex
+  description: This indicates that the worker routine returned without releasing the mutex object that it owned.
+  parameters:
+    - The address of the worker routine that caused the error.
+    - The parameter passed to the worker routine.
+    - The address of the work item.
+    - Reserved.
 - code: 0x0000003A
   name: SYSTEM_UNWIND_PREVIOUS_USER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x3a--system-unwind-previous-user
 - code: 0x0000003B
   name: SYSTEM_SERVICE_EXCEPTION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x3b--system-service-exception
+  description: This indicates that an exception happened while executing a routine that transitions from non-privileged code to privileged code.
+  parameters:
+    - The exception that caused the bug check.
+    - The address of the instruction that caused the bug check
+    - The address of the context record for the exception that caused the bug check
+    - 0 (Not used)
 - code: 0x0000003C
   name: INTERRUPT_UNWIND_ATTEMPTED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x3c--interrupt-unwind-attempted
 - code: 0x0000003D
   name: INTERRUPT_EXCEPTION_NOT_HANDLED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x3d--interrupt-exception-not-handled
+  description: This indicates that the exception handler for the kernel interrupt object interrupt management was not able to handle the generated exception.
+  parameters:
+    - Exception Record (When Available)
+    - Context Record (When Available)
+    - "0"
+    - "0"
 - code: 0x0000003E
   name: MULTIPROCESSOR_CONFIGURATION_NOT_SUPPORTED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x3e--multiprocessor-configuration-not-supported
+  description: This indicates that the system has multiple processors, but they are asymmetric in relation to one another.
 - code: 0x0000003F
   name: NO_MORE_SYSTEM_PTES
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x3f--no-more-system-ptes
+  description: This is the result of a system which has performed too many I/O actions. This has resulted in fragmented system page table entries (PTE).
+  parameters:
+    - |-
+      0: system expansion PTE type
+      1: nonpaged pool expansion PTE type
+    - Size of memory request
+    - Total free system PTEs
+    - Total system PTEs
 - code: 0x00000040
   name: TARGET_MDL_TOO_SMALL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x40--target-mdl-too-small
+  description: This indicates that a driver has improperly used IoBuildPartialMdl.
 - code: 0x00000041
   name: MUST_SUCCEED_POOL_EMPTY
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x41--must-succeed-pool-empty
+  description: This indicates that a kernel-mode thread has requested too much must-succeed pool.
+  parameters:
+    - The size of the request that could not be satisfied
+    - The number of pages used from nonpaged pool
+    - The number of requests from nonpaged pool larger than PAGE_SIZE
+    - The number of pages available
 - code: 0x00000042
   name: ATDISK_DRIVER_INTERNAL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x42--atdisk-driver-internal
@@ -202,6 +388,12 @@
 - code: 0x00000044
   name: MULTIPLE_IRP_COMPLETE_REQUESTS
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x44--multiple-irp-complete-requests
+  description: This indicates that a driver has tried to request an IRP be completed that is already complete.
+  parameters:
+    - The address of the IRP
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x00000045
   name: INSUFFICIENT_SYSTEM_MAP_REGS
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x45--insufficient-system-map-regs
@@ -214,12 +406,24 @@
 - code: 0x00000048
   name: CANCEL_STATE_IN_COMPLETED_IRP
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x48--cancel-state-in-completed-irp
+  description: This indicates that an I/O request packet (IRP) was completed, and then was subsequently canceled.
+  parameters:
+    - A pointer to the IRP
+    - The cancel routine set by the driver
+    - Reserved
+    - Reserved
 - code: 0x00000049
   name: PAGE_FAULT_WITH_INTERRUPTS_OFF
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x49--page-fault-with-interrupts-off
 - code: 0x0000004A
   name: IRQL_GT_ZERO_AT_SYSTEM_SERVICE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x4a--irql-gt-zero-at-system-service
+  description: This indicates that a thread is returning to user mode from a system call when its IRQL is still above PASSIVE_LEVEL.
+  parameters:
+    - The address of the system function (system call routine)
+    - The current IRQL
+    - "0"
+    - "0"
 - code: 0x0000004B
   name: STREAMS_INTERNAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x4b--streams-internal-error
@@ -229,18 +433,61 @@
 - code: 0x0000004D
   name: NO_PAGES_AVAILABLE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x4d--no-pages-available
+  description: This indicates that no free pages are available to continue operations.
+  parameters:
+    - The total number of dirty pages
+    - The number of dirty pages destined for the page file
+    - The size of the nonpaged pool available at the time the bug check occurred
+    - The most recent modified write error status.
 - code: 0x0000004E
   name: PFN_LIST_CORRUPT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x4e--pfn-list-corrupt
+  description: This indicates that the page frame number (PFN) list is corrupted.
 - code: 0x0000004F
   name: NDIS_INTERNAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x4f--ndis-internal-error
 - code: 0x00000050
   name: PAGE_FAULT_IN_NONPAGED_AREA
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x50--page-fault-in-nonpaged-area
+  description: This indicates that invalid system memory has been referenced. Typically the memory address is wrong or the memory address is pointing at freed memory.
+  parameters:
+    - Memory address referenced
+    - |-
+      _After Windows 1507 (TH1) Version - x64_
+      0: Read operation
+      2: Write operation
+      10: Execute operation
+
+      _After Windows 1507 (TH1) Version - x86_
+      0: Read operation
+      2: Write operation
+      10: Execute operation
+
+      _After Windows 1507 (TH1) Version - Arm_
+      0: Read operation
+      1: Write operation
+      8: Execute operation
+
+      _Before Windows 1507 (TH1) Version x64 / x86_
+      0: Read operation
+      1: Write operation
+    - Address that referenced memory (if known)
+    - |-
+      Type of page fault
+      0x0 - NONPAGED_BUGCHECK_FREED_PTE - The address referenced is on a page table entry marked as free.
+      0x2 - NONPAGED_BUGCHECK_NOT_PRESENT_PAGE_TABLE The address referenced does not have a valid active page table entry.
+      0x3 - NONPAGED_BUGCHECK_WRONG_SESSION - An attempted reference to a session space address was made in the context of a process that has no session. Typically this means the caller is improperly trying to access a session address without correctly obtaining an object reference to the correct process and attaching to it first. This bugcheck & subtype was last used in Windows 10 RS3. In Windows 10 RS4 and above, this error is instead surfaced as 0x02 (NONPAGED_BUGCHECK_NOT_PRESENT_PAGE_TABLE).
+      0x4 - NONPAGED_BUGCHECK_VA_NOT_CANONICAL - An attempted reference to a non-canonical (illegal) virtual address (Parameter 1) was attempted. The caller should not ever be trying to access this address.
+      0xF - NONPAGED_BUGCHECK_USER_VA_ACCESS_INCONSISTENT - Kernel mode code attempted to access a user mode virtual address when such access is not allowed.
 - code: 0x00000051
   name: REGISTRY_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x51--registry-error
+  description: This indicates that a severe registry error has occurred.
+  parameters:
+    - Reserved
+    - Reserved
+    - The pointer to the hive (if available)
+    - If the hive is corrupt, the return code of `HvCheckHive` (if available)
 - code: 0x00000052
   name: MAILSLOT_FILE_SYSTEM
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x52--mailslot-file-system
@@ -262,9 +509,16 @@
 - code: 0x00000058
   name: FTDISK_INTERNAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x58--ftdisk-internal-error
+  description: This is issued if the system is booted from the wrong copy of a mirrored partition.
 - code: 0x00000059
   name: PINBALL_FILE_SYSTEM
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x59--pinball-file-system
+  description: This indicates that a problem occurred in the Pinball file system.
+  parameters:
+    - Specifies source file and line number information. The high 16 bits (the first four hexadecimal digits after the "0x") identify the source file by its identifier number. The low 16 bits identify the source line in the file where the bug check occurred.
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x0000005A
   name: CRITICAL_SERVICE_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x5a--critical-service-failed
@@ -277,6 +531,7 @@
 - code: 0x0000005D
   name: UNSUPPORTED_PROCESSOR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x5d--unsupported-processor
+  description: This indicates that the computer is attempting to run Windows on an unsupported processor.
 - code: 0x0000005E
   name: OBJECT_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x5e--object-initialization-failed
@@ -307,81 +562,168 @@
 - code: 0x00000067
   name: CONFIG_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x67--config-initialization-failed
+  description: This bug check indicates that the registry configuration failed.
+  parameters:
+    - Reserved
+    - The location selector
+    - The NT status code
+    - Reserved
 - code: 0x00000068
   name: FILE_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x68--file-initialization-failed
 - code: 0x00000069
   name: IO1_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x69--io1-initialization-failed
+  description: This bug check indicates that the initialization of the I/O system failed for some reason.
 - code: 0x0000006A
   name: LPC_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x6a--lpc-initialization-failed
 - code: 0x0000006B
   name: PROCESS1_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x6b--process1-initialization-failed
+  description: This bug check indicates that the initialization of the Microsoft Windows operating system failed.
+  parameters:
+    - The NT status code that caused the failure
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x0000006C
   name: REFMON_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x6c--refmon-initialization-failed
 - code: 0x0000006D
   name: SESSION1_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x6d--session1-initialization-failed
+  description: This bug check indicates that the initialization of the Microsoft Windows operating system failed.
+  parameters:
+    - The NT status code that caused the initialization failure
+    - "0"
+    - "0"
+    - "0"
 - code: 0x0000006E
   name: SESSION2_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x6e--session2-initialization-failed
+  description: This bug check indicates that the initialization of the Microsoft Windows operating system failed.
+  parameters:
+    - The NT status code that caused the Windows operating system to conclude that initialization failed
+    - "0"
+    - "0"
+    - "0"
 - code: 0x0000006F
   name: SESSION3_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x6f--session3-initialization-failed
+  description: This bug check indicates that the initialization of the Microsoft Windows operating system failed.
+  parameters:
+    - The NT status code that caused the Windows operating system to conclude that initialization failed
+    - "0"
+    - "0"
+    - "0"
 - code: 0x00000070
   name: SESSION4_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x70--session4-initialization-failed
+  description: This bug check indicates that the initialization of the Microsoft Windows operating system failed.
+  parameters:
+    - The NT status code that caused the Windows operating system to conclude that initialization failed
+    - "0"
+    - "0"
+    - "0"
 - code: 0x00000071
   name: SESSION5_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x71--session5-initialization-failed
+  description: This bug check indicates that the initialization of the Microsoft Windows operating system failed.
+  parameters:
+    - The NT status code that caused the Windows operating system to conclude that initialization failed
+    - "0"
+    - "0"
+    - "0"
 - code: 0x00000072
   name: ASSIGN_DRIVE_LETTERS_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x72--assign-drive-letters-failed
 - code: 0x00000073
   name: CONFIG_LIST_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x73--config-list-failed
+  description: This bug check indicates that one of the top-level registry keys, also known as core system hives, cannot be linked in the registry tree.
+  parameters:
+    - "1"
+    - The NT status code that led the Windows operating system to assume that it failed to load the hive
+    - The index of the hive in the hive list
+    - A pointer to a UNICODE_STRING structure that contains the file name of the hive
 - code: 0x00000074
   name: BAD_SYSTEM_CONFIG_INFO
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x74--bad-system-config-info
+  description: This bug check indicates that there is an error in the registry.
+  parameters:
+    - Reserved
+    - Reserved
+    - Reserved
+    - The NT status value/code (if it is available)
 - code: 0x00000075
   name: CANNOT_WRITE_CONFIGURATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x75--cannot-write-configuration
+  description: This bug check indicates that the SYSTEM registry hive file cannot be converted to a mapped file.
+  parameters:
+    - "1"
+    - The NT status code that led the Windows operating system to assume that it had failed to convert the hive
+    - Reserved
+    - Reserved
 - code: 0x00000076
   name: PROCESS_HAS_LOCKED_PAGES
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x76--process-has-locked-pages
+  description: This bug check indicates that a driver failed to release locked pages after an I/O operation, or that it attempted to unlock pages that were already unlocked.
 - code: 0x00000077
   name: KERNEL_STACK_INPAGE_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x77--kernel-stack-inpage-error
+  description: This bug check indicates that the requested page of kernel data from the paging file could not be read into memory.
 - code: 0x00000078
   name: PHASE0_EXCEPTION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x78--phase0-exception
+  description: This bug check occurs when an unexpected break is encountered during HAL initialization. This break can occur if you have set the /break parameter in your boot settings but have not enabled kernel debugging.
 - code: 0x00000079
   name: MISMATCHED_HAL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x79--mismatched-hal
+  description: This bug check indicates that the Hardware Abstraction Layer (HAL) revision level or configuration does not match that of the kernel or the computer.
 - code: 0x0000007A
   name: KERNEL_DATA_INPAGE_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x7a--kernel-data-inpage-error
+  description: This bug check indicates that the requested page of kernel data from the paging file couldn't be read into memory.
 - code: 0x0000007B
   name: INACCESSIBLE_BOOT_DEVICE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x7b--inaccessible-boot-device
+  description: This bug check indicates that the Microsoft Windows operating system has lost access to the system partition during startup.
+  parameters:
+    - The address of a UNICODE_STRING structure, or the address of the device object that couldn't be mounted
+    - "0"
+    - "0"
+    - "0"
 - code: 0x0000007C
   name: BUGCODE_NDIS_DRIVER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x7c--bugcode-ndis-driver
+  description: This bug check indicates that the operating system detected an error in a networking driver.
 - code: 0x0000007D
   name: INSTALL_MORE_MEMORY
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x7d--install-more-memory
+  description: This bug check indicates that there is not enough memory to start up the Microsoft Windows operating system.
+  parameters:
+    - The number of physical pages that are found
+    - The lowest physical page
+    - The highest physical page
+    - "0"
 - code: 0x0000007E
   name: SYSTEM_THREAD_EXCEPTION_NOT_HANDLED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x7e--system-thread-exception-not-handled
+  description: This bug check indicates that a system thread generated an exception that the error handler didn't catch.
+  parameters:
+    - The exception code that wasn't handled.
+    - The address where the exception occurred.
+    - The address of the exception record.
+    - The address of the context record.
 - code: 0x0000007F
   name: UNEXPECTED_KERNEL_MODE_TRAP
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x7f--unexpected-kernel-mode-trap
+  description: This bug check indicates that the Intel CPU generated a trap and the kernel failed to catch this trap.
 - code: 0x00000080
   name: NMI_HARDWARE_FAILURE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x80--nmi-hardware-failure
+  description: This bug check indicates that a hardware malfunction has occurred.
 - code: 0x00000081
   name: SPIN_LOCK_INIT_FAILURE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x81--spin-lock-init-failure
@@ -391,741 +733,1891 @@
 - code: 0x00000085
   name: SETUP_FAILURE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x85--setup-failure
+  description: This bug check indicates that a fatal error occurred during setup.
 - code: 0x0000008B
   name: MBR_CHECKSUM_MISMATCH
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x8b--mbr-checksum-mismatch
+  description: This bug check indicates that a mismatch has occurred in the MBR checksum.
+  parameters:
+    - The disk signature from MBR
+    - The MBR checksum that the OS Loader calculates
+    - The MBR checksum that the system calculates
+    - Reserved
 - code: 0x0000008E
   name: KERNEL_MODE_EXCEPTION_NOT_HANDLED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x8e--kernel-mode-exception-not-handled
+  description: This bug check indicates that a kernel-mode application generated an exception that the error handler did not catch.
+  parameters:
+    - The exception code that was not handled
+    - The address where the exception occurred
+    - The trap frame
+    - Reserved
 - code: 0x0000008F
   name: PP0_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x8f--pp0-initialization-failed
+  description: This bug check indicates that the Plug and Play (PnP) manager could not be initialized.
 - code: 0x00000090
   name: PP1_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x90--pp1-initialization-failed
+  description: This bug check indicates that the Plug and Play (PnP) manager could not be initialized.
 - code: 0x00000092
   name: UP_DRIVER_ON_MP_SYSTEM
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x92--up-driver-on-mp-system
+  description: This bug check indicates that a uniprocessor-only driver has been loaded on a multiprocessor system.
+  parameters:
+    - The base address of the driver
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x00000093
   name: INVALID_KERNEL_HANDLE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x93--invalid-kernel-handle
+  description: This bug check indicates that an invalid or protected handle was passed to `NtClose`.
 - code: 0x00000094
   name: KERNEL_STACK_LOCKED_AT_EXIT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x94--kernel-stack-locked-at-exit
+  description: This bug check indicates that a thread exited while its kernel stack was marked as not swappable
 - code: 0x00000096
   name: INVALID_WORK_QUEUE_ITEM
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x96--invalid-work-queue-item
+  description: This bug check indicates that a queue entry was removed that contained a `NULL` pointer.
+  parameters:
+    - The address of the queue entry whose `flink` or `blink` field is `NULL`.
+    - The address of the queue that is being referenced. Typically, this queue is an `ExWorkerQueue`.
+    - The base address of the `ExWorkerQueue` array. (This address helps you determine if the queue in question is indeed an `ExWorkerQueue`. If the queue is an `ExWorkerQueue`, the offset from this parameter will isolate the queue.)
+    - Assuming the queue is an `ExWorkerQueue`, this value is the address of the worker routine that would have been called if the work item had been valid. (You can use this address to isolate the driver that is misusing the work queue.)
 - code: 0x00000097
   name: BOUND_IMAGE_UNSUPPORTED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x97--bound-image-unsupported
 - code: 0x00000098
   name: END_OF_NT_EVALUATION_PERIOD
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x98--end-of-nt-evaluation-period
+  description: This bug check indicates that the trial period for the Microsoft Windows operating system has ended.
+  parameters:
+    - The low-order 32 bits of the product expiration date
+    - The high-order 32 bits of the product expiration date
+    - Reserved
+    - Reserved
 - code: 0x00000099
   name: INVALID_REGION_OR_SEGMENT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x99--invalid-region-or-segment
+  description: This bug check indicates that `ExInitializeRegion` or `ExInterlockedExtendRegion` was called with an invalid set of parameters.
 - code: 0x0000009A
   name: SYSTEM_LICENSE_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x9a--system-license-violation
+  description: This bug check indicates that the software license agreement has been violated.
 - code: 0x0000009B
   name: UDFS_FILE_SYSTEM
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x9b--udfs-file-system
+  description: This bug check indicates that a problem occurred in the UDF file system.
+  parameters:
+    - The source file and line number information. The high 16 bits (the first four hexadecimal digits after the "0x") identify the source file by its identifier number. The low 16 bits identify the source line in the file where the bug check occurred.
+    - If `UdfExceptionFilter` is on the stack, this parameter specifies the address of the exception record.
+    - If `UdfExceptionFilter` is on the stack, this parameter specifies the address of the context record.
+    - Reserved
 - code: 0x0000009C
   name: MACHINE_CHECK_EXCEPTION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x9c--machine-check-exception
+  description: This bug check indicates that a fatal machine check exception has occurred.
 - code: 0x0000009E
   name: USER_MODE_HEALTH_MONITOR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x9e--user-mode-health-monitor
+  description: This bug check indicates that one or more critical user-mode components failed to satisfy a health check.
+  parameters:
+    - The process that failed to satisfy a health check in the configured time-out
+    - The health monitoring time-out, in seconds
+    - Watchdog source. In combination with process address helps to identify what sub-component has created this watchdog
+    - Reserved
 - code: 0x0000009F
   name: DRIVER_POWER_STATE_FAILURE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x9f--driver-power-state-failure
+  description: This bug check indicates that the driver is in an inconsistent or invalid power state.
 - code: 0x000000A0
   name: INTERNAL_POWER_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xa0--internal-power-error
+  description: This bug check indicates that the power policy manager experienced a fatal error.
 - code: 0x000000A1
   name: PCI_BUS_DRIVER_INTERNAL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xa1--pci-bus-driver-internal
+  description: This bug check indicates that the PCI Bus driver detected inconsistency problems in its internal structures and could not continue.
 - code: 0x000000A2
   name: MEMORY_IMAGE_CORRUPT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xa2--memory-image-corrupt
+  description: This bug check indicates that corruption has been detected in the image of an executable file in memory.
 - code: 0x000000A3
   name: ACPI_DRIVER_INTERNAL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xa3--acpi-driver-internal
+  description: This bug check indicates that the ACPI driver detected an internal inconsistency.
+  parameters:
+    - Reserved
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x000000A4
   name: CNSS_FILE_SYSTEM_FILTER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xa4--cnss-file-system-filter
+  description: This bug check indicates that a problem occurred in the CNSS file system filter.
+  parameters:
+    - Specifies source file and line number information. The high 16 bits (the first four hexadecimal digits after the "0x") identify the source file by its identifier number. The low 16 bits identify the source line in the file where the bug check occurred.
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x000000A5
   name: ACPI_BIOS_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xa5--acpi-bios-error
+  description: This bug check indicates that the Advanced Configuration and Power Interface (ACPI) BIOS of the computer is not fully compliant with the ACPI specification.
 - code: 0x000000A7
   name: BAD_EXHANDLE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xa7--bad-exhandle
+  description: This bug check indicates that the kernel-mode handle table detected an inconsistent handle table entry state.
 - code: 0x000000AC
   name: HAL_MEMORY_ALLOCATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xac--hal-memory-allocation
+  description: This bug check indicates that the hardware abstraction layer (HAL) could not obtain sufficient memory.
+  parameters:
+    - The allocation size
+    - "0"
+    - A pointer to a string that contains the file name
+    - Reserved
 - code: 0x000000AD
   name: VIDEO_DRIVER_DEBUG_REPORT_REQUEST
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xad--video-driver-debug-report-request
+  description: This bug check indicates that the video port created a non-fatal minidump on behalf of the video driver during run time.
+  parameters:
+    - Driver-specific
+    - Driver-specific
+    - Driver-specific
+    - The number of all reports that have been requested since boot time
 - code: 0x000000B1
   name: BGI_DETECTED_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xb1--bgi-detected-violation
 - code: 0x000000B4
   name: VIDEO_DRIVER_INIT_FAILURE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xb4--video-driver-init-failure
+  description: This indicates that Windows was unable to enter graphics mode.
 - code: 0x000000B8
   name: ATTEMPTED_SWITCH_FROM_DPC
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xb8--attempted-switch-from-dpc
+  description: This indicates that an illegal operation was attempted by a delayed procedure call (DPC) routine.
+  parameters:
+    - The original thread causing the failure
+    - The new thread
+    - The stack address of the original thread
+    - Reserved
 - code: 0x000000B9
   name: CHIPSET_DETECTED_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xb9--chipset-detected-error
 - code: 0x000000BA
   name: SESSION_HAS_VALID_VIEWS_ON_EXIT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xba--session-has-valid-views-on-exit
+  description: This indicates that a session driver still had mapped views when the session unloaded.
+  parameters:
+    - The session ID
+    - The number of mapped views that are leaking
+    - The address of this session's mapped views table
+    - The size of this session's mapped views table
 - code: 0x000000BB
   name: NETWORK_BOOT_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xbb--network-boot-initialization-failed
+  description: This indicates that Windows failed to successfully boot off a network.
+  parameters:
+    - |-
+      The part of network initialization that failed. Possible values are:
+      1: Failure while updating the registry.
+      2: Failure while starting the network stack. Windows sends IOCTLs to the redirector and datagram receiver, then waits for the redirector to be ready. If it is not ready within a certain period of time, this error is issued.
+      3: Failure while sending the DHCP IOCTL to TCP. This is how Windows informs the transport of its IP address.
+    - The failure status
+    - Reserved
+    - Reserved
 - code: 0x000000BC
   name: NETWORK_BOOT_DUPLICATE_ADDRESS
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xbc--network-boot-duplicate-address
+  description: This indicates that a duplicate IP address was assigned to this machine while booting off a network.
+  parameters:
+    - The IP address, shown as a DWORD. An address of the form `aa.bb.cc.dd` will appear as 0xDDCCBBAA.
+    - The hardware address of the other machine. (For an Ethernet connection, see the following note.)
+    - The hardware address of the other machine. (For an Ethernet connection, see the following note.)
+    - The hardware address of the other machine. (For an Ethernet connection, this will be zero.)
 - code: 0x000000BD
   name: INVALID_HIBERNATED_STATE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xbd--invalid-hibernated-state
+  description: This indicates that the hibernated memory image does not match the current hardware configuration. This bugcheck occurs when a system resumes from hibernate and discovers that the hardware has been changed while the system was hibernated.
+  parameters:
+    - |-
+      Hardware that was invalid.
+      1 : Number of installed processors is less than before the hibernation
+      Value in Param 2: Number of processors before hibernation
+      Value in Param 3: Number of processors after hibernation
+    - Per Parameter 1
+    - Per Parameter 1
+    - Reserved
 - code: 0x000000BE
   name: ATTEMPTED_WRITE_TO_READONLY_MEMORY
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xbe--attempted-write-to-readonly-memory
+  description: This is issued if a driver attempts to write to a read-only memory segment.
+  parameters:
+    - Virtual address of attempted write
+    - PTE contents
+    - Reserved
+    - Reserved
 - code: 0x000000BF
   name: MUTEX_ALREADY_OWNED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xbf--mutex-already-owned
+  description: This indicates that a thread attempted to acquire ownership of a mutex it already owned.
+  parameters:
+    - The address of the mutex
+    - The thread that caused the error
+    - "0"
+    - Reserved
 - code: 0x000000C1
   name: SPECIAL_POOL_DETECTED_MEMORY_CORRUPTION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xc1--special-pool-detected-memory-corruption
+  description: This indicates that the driver wrote to an invalid section of the special pool.
 - code: 0x000000C2
   name: BAD_POOL_CALLER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xc2--bad-pool-caller
+  description: This indicates that the current thread is making a bad pool request.
 - code: 0x000000C4
   name: DRIVER_VERIFIER_DETECTED_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xc4--driver-verifier-detected-violation
+  description: This is the general bug check code for fatal errors found by Driver Verifier.
 - code: 0x000000C5
   name: DRIVER_CORRUPTED_EXPOOL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xc5--driver-corrupted-expool
+  description: This indicates that the system attempted to access invalid memory at a process IRQL that was too high.
+  parameters:
+    - Memory referenced
+    - IRQL at time of reference
+    - |-
+      0: Read
+      1: Write
+    - Address that referenced memory
 - code: 0x000000C6
   name: DRIVER_CAUGHT_MODIFYING_FREED_POOL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xc6--driver-caught-modifying-freed-pool
+  description: This indicates that the driver attempted to access a freed memory pool.
+  parameters:
+    - Memory referenced
+    - |-
+      0: Read
+      1: Write
+    - |-
+      0: Kernel mode
+      1: User mode
+    - Reserved
 - code: 0x000000C7
   name: TIMER_OR_DPC_INVALID
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xc7--timer-or-dpc-invalid
+  description: This is issued if a kernel timer or delayed procedure call (DPC) is found somewhere in memory where it is not permitted.
 - code: 0x000000C8
   name: IRQL_UNEXPECTED_VALUE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xc8--irql-unexpected-value
+  description: This indicates that the processor's IRQL is not what it should be at this time.
+  parameters:
+    - "The value of the following bit computation: (Current IRQL << 16) | (Expected IRQL << 8) | UniqueValue"
+    - |-
+      If UniqueValue is 0 or 1: APC->KernelRoutine.
+      If UniqueValue is 2: the callout routine
+      If UniqueValue is 3: the interrupt's ServiceRoutine
+      If UniqueValue is 0xfe: 1 if APCs are disabled
+    - |-
+      If UniqueValue is 0 or 1: APC
+      If UniqueValue is 2: the callout's parameter
+      If UniqueValue is 3: KINTERRUPT
+    - "If UniqueValue is 0 or 1: APC->NormalRoutine"
 - code: 0x000000C9
   name: DRIVER_VERIFIER_IOMANAGER_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xc9--driver-verifier-iomanager-violation
+  description: This is the bug check code for all Driver Verifier I/O Verification violations.
 - code: 0x000000CA
   name: PNP_DETECTED_FATAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xca--pnp-detected-fatal-error
+  description: This indicates that the Plug and Play Manager encountered a severe error, probably as a result of a problematic Plug and Play driver.
+  parameters:
+    - The address of the internal lock tracking structure.
+    - 0 (Reserved)
+    - Address of the MDL containing the locked pages.
+    - Number of locked pages
 - code: 0x000000CB
   name: DRIVER_LEFT_LOCKED_PAGES_IN_PROCESS
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xcb--driver-left-locked-pages-in-process
+  description: This indicates that a driver or the I/O manager failed to release locked pages after an I/O operation.
 - code: 0x000000CC
   name: PAGE_FAULT_IN_FREED_SPECIAL_POOL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xcc--page-fault-in-freed-special-pool
+  description: This indicates that the system has referenced memory which was earlier freed.
+  parameters:
+    - Memory address referenced
+    - |-
+      0: Read
+      1: Write
+    - Address that referenced memory (if known)
+    - Reserved
 - code: 0x000000CD
   name: PAGE_FAULT_BEYOND_END_OF_ALLOCATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xcd--page-fault-beyond-end-of-allocation
+  description: This indicates that the system accessed memory beyond the end of some driver's pool allocation.
+  parameters:
+    - Memory address referenced
+    - |-
+      0: Read
+      1: Write
+    - Address that referenced memory (if known)
+    - Reserved
 - code: 0x000000CE
   name: DRIVER_UNLOADED_WITHOUT_CANCELLING_PENDING_OPERATIONS
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xce--driver-unloaded-without-cancelling-pending-operations
+  description: This indicates that a driver failed to cancel pending operations before unloading.
+  parameters:
+    - Memory address referenced
+    - |-
+      0: Read
+      1: Write
+    - Address that referenced memory (if known)
+    - Reserved
 - code: 0x000000CF
   name: TERMINAL_SERVER_DRIVER_MADE_INCORRECT_MEMORY_REFERENCE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xcf--terminal-server-driver-made-incorrect-memory-reference
+  description: This indicates that a driver has been incorrectly ported to the terminal server.
+  parameters:
+    - Memory address referenced
+    - |-
+      0: Read
+      1: Write
+    - Address that referenced memory (if known)
+    - Reserved
 - code: 0x000000D0
   name: DRIVER_CORRUPTED_MMPOOL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xd0--driver-corrupted-mmpool
+  description: This indicates that the system attempted to access invalid memory at a process IRQL that was too high.
+  parameters:
+    - Memory referenced
+    - IRQL at time of reference
+    - |-
+      0: Read
+      1: Write
+    - Address that referenced memory
 - code: 0x000000D1
   name: DRIVER_IRQL_NOT_LESS_OR_EQUAL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xd1--driver-irql-not-less-or-equal
+  description: This indicates that a kernel-mode driver attempted to access pageable memory while the process IRQL that was too high.
+  parameters:
+    - Memory referenced.
+    - IRQL at time of reference.
+    - |-
+      * 0 - Read
+      * 1 - Write
+      * 2 - Execute
+      * 8 - Execute
+    - Address that referenced memory.
 - code: 0x000000D2
   name: BUGCODE_ID_DRIVER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xd2--bugcode-id-driver
+  description: This indicates that a problem occurred with an NDIS driver.
 - code: 0x000000D3
   name: DRIVER_PORTION_MUST_BE_NONPAGED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xd3--driver-portion-must-be-nonpaged
+  description: his indicates that the system attempted to access pageable memory at a process IRQL that was too high.
+  parameters:
+    - Memory referenced
+    - IRQL at time of reference
+    - |-
+      0: Read
+      1: Write
+    - Address that referenced memory
 - code: 0x000000D4
-  name: SYSTEM_SCAN_AT_RAISED_IRQL_CAUGHT_IMPROPER_DRIVER_UNLOAD**
+  name: SYSTEM_SCAN_AT_RAISED_IRQL_CAUGHT_IMPROPER_DRIVER_UNLOAD
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xd4--system-scan-at-raised-irql-caught-improper-driver-unlo
+  description: This indicates that a driver did not cancel pending operations before unloading.
+  parameters:
+    - Memory referenced
+    - IRQL at time of reference
+    - |-
+      0: Read
+      1: Write
+    - Address that referenced memory
 - code: 0x000000D5
   name: DRIVER_PAGE_FAULT_IN_FREED_SPECIAL_POOL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xd5--driver-page-fault-in-freed-special-pool
+  description: This indicates that a driver has referenced memory which was earlier freed.
+  parameters:
+    - Memory address referenced
+    - |-
+      0: Read
+      1: Write
+    - Address that referenced memory (if known)
+    - Reserved
 - code: 0x000000D6
   name: DRIVER_PAGE_FAULT_BEYOND_END_OF_ALLOCATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xd6--driver-page-fault-beyond-end-of-allocation
+  description: This indicates the driver accessed memory beyond the end of its pool allocation.
+  parameters:
+    - Memory address referenced
+    - |-
+      0: Read
+      1: Write
+    - Address that referenced memory (if known)
+    - Reserved
 - code: 0x000000D7
   name: DRIVER_UNMAPPING_INVALID_VIEW
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xd7--driver-unmapping-invalid-view
+  description: This indicates a driver is trying to unmap an address that was not mapped.
+  parameters:
+    - Virtual address to unmap
+    - |-
+      1: The view is being unmapped
+      2: The view is being committed
+    - "0"
+    - "0"
 - code: 0x000000D8
   name: DRIVER_USED_EXCESSIVE_PTES
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xd8--driver-used-excessive-ptes
+  description: This indicates that there are no more system page table entries (PTE) remaining.
+  parameters:
+    - Pointer to the name of the driver that caused the error (Unicode string), or zero
+    - Number of PTEs used by the driver that caused the error (if Parameter 1 is nonzero)
+    - Total free system PTEs
+    - Total system PTEs
 - code: 0x000000D9
   name: LOCKED_PAGES_TRACKER_CORRUPTION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xd9--locked-pages-tracker-corruption
+  description: This indicates that the internal locked-page tracking structures have been corrupted.
 - code: 0x000000DA
   name: SYSTEM_PTE_MISUSE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xda--system-pte-misuse
+  description: This indicates that a page table entry (PTE) routine has been used in an improper way.
 - code: 0x000000DB
   name: DRIVER_CORRUPTED_SYSPTES
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xdb--driver-corrupted-sysptes
+  description: This indicates that an attempt was made to touch memory at an invalid IRQL, probably due to corruption of system PTEs.
+  parameters:
+    - Memory referenced
+    - IRQL
+    - |-
+      0: Read
+      1: Write
+    - Address in code which referenced memory
 - code: 0x000000DC
   name: DRIVER_INVALID_STACK_ACCESS
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xdc--driver-invalid-stack-access
+  description: This indicates that a driver accessed a stack address that lies below the stack pointer of the stack's thread.
 - code: 0x000000DE
   name: POOL_CORRUPTION_IN_FILE_AREA
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xde--pool-corruption-in-file-area
+  description: This indicates that a driver has corrupted pool memory that is used for holding pages destined for disk.
 - code: 0x000000DF
   name: IMPERSONATING_WORKER_THREAD
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xdf--impersonating-worker-thread
+  description: This indicates that a workitem did not disable impersonation before it completed.
+  parameters:
+    - The worker routine that caused this error
+    - The parameter passed to this worker routine
+    - A pointer to the work item
+    - Reserved
 - code: 0x000000E0
   name: ACPI_BIOS_FATAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xe0--acpi-bios-fatal-error
+  description: This indicates that one of your computer components is faulty.
 - code: 0x000000E1
   name: WORKER_THREAD_RETURNED_AT_BAD_IRQL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xe1--worker-thread-returned-at-bad-irql
+  description: This indicates that a worker thread completed and returned with IRQL >= DISPATCH_LEVEL.
+  parameters:
+    - Address of the worker routine
+    - IRQL that the worker thread returned at
+    - Work item parameter
+    - Work item address
 - code: 0x000000E2
   name: MANUALLY_INITIATED_CRASH
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xe2--manually-initiated-crash
+  description: This indicates that the user deliberately initiated a crash dump from either the kernel debugger or the keyboard.
 - code: 0x000000E3
   name: RESOURCE_NOT_OWNED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xe3--resource-not-owned
+  description: This indicates that a thread tried to release a resource it did not own.
+  parameters:
+    - Address of resource
+    - Address of thread
+    - Address of owner table (if it exists)
+    - Reserved
 - code: 0x000000E4
   name: WORKER_INVALID
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xe4--worker-invalid
+  description: This indicates that memory that should not contain an executive work item does contain such an item, or that a currently active work item was queued.
 - code: 0x000000E6
   name: DRIVER_VERIFIER_DMA_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xe6--driver-verifier-dma-violation
+  description: This is the bug check code for all Driver Verifier DMA Verification violations.
 - code: 0x000000E7
   name: INVALID_FLOATING_POINT_STATE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xe7--invalid-floating-point-state
+  description: This indicates that a thread's saved floating-point state is invalid.
 - code: 0x000000E8
   name: INVALID_CANCEL_OF_FILE_OPEN
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xe8--invalid-cancel-of-file-open
+  description: This indicates that an invalid file object was passed to `IoCancelFileOpen`.
+  parameters:
+    - The file object passed to `IoCancelFileOpen`
+    - The device object passed to `IoCancelFileOpen`
+    - Reserved
+    - Reserved
 - code: 0x000000E9
   name: ACTIVE_EX_WORKER_THREAD_TERMINATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xe9--active-ex-worker-thread-termination
+  description: This indicates that an active executive worker thread is being terminated.
+  parameters:
+    - The exiting ETHREAD
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x000000EA
   name: THREAD_STUCK_IN_DEVICE_DRIVER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xea--thread-stuck-in-device-driver
+  description: This indicates that a thread in a device driver is endlessly spinning.
+  parameters:
+    - A pointer to the stuck thread object
+    - A pointer to the DEFERRED_WATCHDOG object
+    - A pointer to the offending driver name
+    - |-
+      **In the kernel debugger**: The number of times the "intercepted" bug check 0xEA was hit
+      **On the blue screen**: 1
 - code: 0x000000EB
   name: DIRTY_MAPPED_PAGES_CONGESTION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xeb--dirty-mapped-pages-congestion
+  description: This indicates that no free pages are available to continue operations.
+  parameters:
+    - The total number of dirty pages
+    - The number of dirty pages destined for the page file
+    - |-
+      **Windows Server 2003 only**: The size of the nonpaged pool available at the time of the bug check (in pages)
+      **Windows Vista and later versions**: Reserved
+    - |-
+      **Windows Server 2003 only**: The number of transition pages that are currently stranded
+      **Windows Vista and later versions**: The most recent modified write error status
 - code: 0x000000EC
   name: SESSION_HAS_VALID_SPECIAL_POOL_ON_EXIT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xec--session-has-valid-special-pool-on-exit
+  description: This indicates that a session unload occurred while a session driver still held memory.
+  parameters:
+    - The session ID
+    - The number of special pool pages that are leaking
+    - Reserved
+    - Reserved
 - code: 0x000000ED
   name: UNMOUNTABLE_BOOT_VOLUME
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xed--unmountable-boot-volume
+  description: This indicates that the I/O subsystem attempted to mount the boot volume and it failed.
+  parameters:
+    - The device object of the boot volume
+    - The status code from the file system that describes why it failed to mount the volume
+    - Reserved
+    - Reserved
 - code: 0x000000EF
   name: CRITICAL_PROCESS_DIED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xef--critical-process-died
+  description: This check indicates that a critical system process terminated. A critical process forces the system to bug check if the system terminates. This check happens when the state of the process is corrupted or damaged. When the corruption or damage happens, as these processes are critical to the operation of Windows, a system bug check occurs as the operating system integrity is in question.
+  parameters:
+    - The process object
+    - If 0, a process terminated. If 1, a thread terminated.
+    - Reserved
+    - Reserved
 - code: 0x000000F0
   name: STORAGE_MINIPORT_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xf0--storage-miniport-error
+  description: It indicates that a storage Miniport driver failed to complete a SRB request.
 - code: 0x000000F1
   name: SCSI_VERIFIER_DETECTED_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xf1--scsi-verifier-detected-violation
+  description: This is the bug check code for all Driver Verifier SCSI Verification violations.
 - code: 0x000000F2
   name: HARDWARE_INTERRUPT_STORM
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xf2--hardware-interrupt-storm
+  description: This indicates that the kernel detected an interrupt storm.
+  parameters:
+    - Address of the ISR (or first ISR in the chain) connected to the storming interrupt vector
+    - ISR context value
+    - Address of the interrupt object for the storming interrupt vector
+    - 0x1 if the ISR is not chained, 0x2 if the ISR is chained
 - code: 0x000000F3
   name: DISORDERLY_SHUTDOWN
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xf3--disorderly-shutdown
+  description: This indicates that Windows was unable to shut down due to lack of memory.
+  parameters:
+    - The total number of dirty pages
+    - The number of dirty pages destined for the page file
+    - |-
+      **Windows Server 2003 only**: The size of the nonpaged pool available at the time of the bug check (in pages)
+      **Windows Vista and later**: Reserved
+    - |-
+      **Windows Server 2003 only**: The current shut down stage
+      **Windows Vista and later**: The most recent modified write error status
 - code: 0x000000F4
   name: CRITICAL_OBJECT_TERMINATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xf4--critical-object-termination
+  description: This indicates that a process or thread crucial to system operation has unexpectedly exited or been terminated.
+  parameters:
+    - |-
+      The terminating object type:
+      0x3: Process
+      0x6: Thread
+    - The terminating object
+    - The process image file name
+    - Pointer to an ASCII string containing an explanatory message
 - code: 0x000000F5
   name: FLTMGR_FILE_SYSTEM
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xf5--fltmgr-file-system
+  description: This indicates that an unrecoverable failure occurred in the Filter Manager.
 - code: 0x000000F6
   name: PCI_VERIFIER_DETECTED_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xf6--pci-verifier-detected-violation
+  description: This indicates that an error occurred in the BIOS or another device being verified by the PCI driver.
 - code: 0x000000F7
   name: DRIVER_OVERRAN_STACK_BUFFER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xf7--driver-overran-stack-buffer
+  description: This indicates that a driver has overrun a stack-based buffer.
+  parameters:
+    - The actual security check cookie from the stack
+    - The expected security check cookie
+    - The bit-complement of the expected security check cookie
+    - "0"
 - code: 0x000000F8
   name: RAMDISK_BOOT_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xf8--ramdisk-boot-initialization-failed
+  description: This indicates that an initialization failure occurred while attempting to boot from the RAM disk.
+  parameters:
+    - |-
+      Indicates the cause of the failure.
+      1: No LoaderXIPRom descriptor was found in the loader memory list.
+      2: Unable to open the RAM disk driver (ramdisk.sys or \Device\Ramdisk).
+      3: FSCTL_CREATE_RAM_DISK failed.
+      4: Unable to create GUID string from binary GUID.
+      5: Unable to create symbolic link pointing to the RAM disk device.
+    - NTSTATUS code
+    - "0"
+    - "0"
 - code: 0x000000F9
   name: DRIVER_RETURNED_STATUS_REPARSE_FOR_VOLUME_OPEN
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xf9--driver-returned-status-reparse-for-volume-open
+  description: This indicates that a driver returned STATUS_REPARSE to an IRP_MJ_CREATE request with no trailing names.
+  parameters:
+    - The device object that was opened
+    - The device object to which the IRP_MJ_CREATE request was issued
+    - Address of the Unicode string containing the new name of the file (to be reparsed)
+    - Information returned by the driver for the IRP_MJ_CREATE request
 - code: 0x000000FA
   name: HTTP_DRIVER_CORRUPTED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xfa---http-driver-corrupted
+  description: This indicates that the HTTP kernel driver (Http.sys) has reached a corrupted state and cannot recover.
 - code: 0x000000FC
   name: ATTEMPTED_EXECUTE_OF_NOEXECUTE_MEMORY
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xfc---attempted-execute-of-noexecute-memory
+  description: This indicates that an attempt was made to execute non-executable memory.
+  parameters:
+    - The virtual address whose execution was attempted
+    - The contents of the page table entry (PTE)
+    - Reserved
+    - Reserved
 - code: 0x000000FD
   name: DIRTY_NOWRITE_PAGES_CONGESTION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xfd---dirty-nowrite-pages-congestion
+  description: This indicates that there are no free pages available to continue basic system operations.
+  parameters:
+    - Total number of dirty pages
+    - Number of non-writeable dirty pages
+    - Reserved
+    - Most recently modified write-error status
 - code: 0x000000FE
   name: BUGCODE_USB_DRIVER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xfe--bugcode-usb-driver
+  description: This indicates that an error has occurred in a universal serial bus (USB) driver.
 - code: 0x000000FF
   name: RESERVE_QUEUE_OVERFLOW
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xff---reserve-queue-overflow
+  description: This indicates that an attempt was made to insert a new item into a reserve queue, causing the queue to overflow.
+  parameters:
+    - The address of the reserve queue
+    - The size of the reserve queue
+    - "0"
+    - "0"
 - code: 0x00000100
   name: LOADER_BLOCK_MISMATCH
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x100---loader-block-mismatch
+  description: This indicates that either the loader block is invalid, or it does not match the system that is being loaded.
+  parameters:
+    - "3"
+    - The size of the loader black extension
+    - The major version of the loader block
+    - The minor version of the loader block
 - code: 0x00000101
   name: CLOCK_WATCHDOG_TIMEOUT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x101---clock-watchdog-timeout
+  description: This bug check indicates that an expected clock interrupt on a secondary processor, in a multi-processor system, wasn't received within the allocated interval.
+  parameters:
+    - Clock interrupt time-out interval, in nominal clock ticks.
+    - "0"
+    - The address of the processor control block (PRCB) for the unresponsive processor.
+    - The index of the hung processor.
 - code: 0x00000102
   name: DPC_WATCHDOG_TIMEOUT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x102--dpc-watchdog-timeout
+  description: This indicates that The DPC watchdog routine was not executed within the allocated time interval.
+  parameters:
+    - DPC watchdog time out interval in nominal clock ticks.
+    - The PRCB address of the hung processor.
+    - Reserved
+    - Reserved
 - code: 0x00000103
   name: MUP_FILE_SYSTEM
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x103---mup-file-system
+  description: This bug check indicates that the multiple UNC provider (MUP) has encountered invalid or unexpected data. As a result, the MUP cannot channel a remote file system request to a network redirector, the Universal Naming Convention (UNC) provider.
 - code: 0x00000104
   name: AGP_INVALID_ACCESS
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x104---agp-invalid-access
+  description: This indicates that the GPU wrote to a range of Accelerated Graphics Port (AGP) memory that had not previously been committed.
+  parameters:
+    - Offset (in ULONG) within the AGP verifier page to the first ULONG data that is corrupted
+    - "0"
+    - "0"
+    - "0"
 - code: 0x00000105
   name: AGP_GART_CORRUPTION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x105---agp-gart-corruption
+  description: This indicates that the Graphics Aperture Remapping Table (GART) is corrupt.
+  parameters:
+    - The base address (virtual) of the GART2
+    - The offset into the GART where the corruption occurred
+    - The base address (virtual) of the GART cache (a copy of the GART)
+    - "0"
 - code: 0x00000106
   name: AGP_ILLEGALLY_REPROGRAMMED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x106---agp-illegally-reprogrammed
+  description: This indicates that the Accelerated Graphics Port (AGP) hardware has been reprogrammed by an unauthorized agent.
+  parameters:
+    - The originally programmed AGP command register value
+    - The current command register value
+    - "0"
+    - "0"
 - code: 0x00000108
   name: THIRD_PARTY_FILE_SYSTEM_FAILURE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x108--third-party-file-system-failure
+  description: This indicates that an unrecoverable problem has occurred in a third-party file system or file system filter.
+  parameters:
+    - |-
+      Identifies the file system that failed. Possible values include:
+      1: Polyserve (Psfs.sys)
+    - The address of the exception record.
+    - The address of the context record.
+    - Reserved.
 - code: 0x00000109
   name: CRITICAL_STRUCTURE_CORRUPTION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x109---critical-structure-corruption
+  description: This indicates that the kernel has detected critical kernel code or data corruption.
+  parameters:
+    - Reserved
+    - Reserved
+    - Reserved
+    - The type of the corrupted region. (See the following table later on this page.)
 - code: 0x0000010A
   name: APP_TAGGING_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x10a---app-tagging-initialization-failed
 - code: 0x0000010C
   name: FSRTL_EXTRA_CREATE_PARAMETER_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x10c---fsrtl-extra-create-parameter-violation
+  description: This indicates that a violation was detected in the File system Run-time library (FsRtl) Extra Create Parameter (ECP) package.
+  parameters:
+    - The type of violation. (See the following table later on this page for more details).
+    - "0"
+    - The address of the ECP.
+    - The starting address of the ECP list.
 - code: 0x0000010D
   name: WDF_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x10d---wdf-violation
+  description: This indicates that Kernel-Mode Driver Framework (KMDF) detected that Windows found an error in a framework-based driver.
 - code: 0x0000010E
   name: VIDEO_MEMORY_MANAGEMENT_INTERNAL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x10e---video-memory-management-internal
+  description: This indicates that the video memory manager has encountered a condition that it is unable to recover from.
 - code: 0x0000010F
   name: RESOURCE_MANAGER_EXCEPTION_NOT_HANDLED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x10f---resource-manager-exception-not-handled
+  description: This indicates that the kernel transaction manager detected that a kernel-mode resource manager has raised an exception in response to a direct call-back. The resource manager is in an unexpected and unrecoverable state.
+  parameters:
+    - The address of the exception record
+    - The address of the context record
+    - The address of the exception code
+    - The address of the resource manager
 - code: 0x00000111
   name: RECURSIVE_NMI
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x111---recursive-nmi
+  description: This bug check indicates that a non-maskable-interrupt (NMI) occurred while a previous NMI was in progress.
 - code: 0x00000112
   name: MSRPC_STATE_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x112---msrpc-state-violation
+  description: This indicates that the Msrpc.sys driver has initiated a bug check.
 - code: 0x00000113
   name: VIDEO_DXGKRNL_FATAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x113---video-dxgkrnl-fatal-error
+  description: This indicates that the Microsoft DirectX graphics kernel subsystem has detected a violation.
 - code: 0x00000114
   name: VIDEO_SHADOW_DRIVER_FATAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x114---video-shadow-driver-fatal-error
+  description: This indicates that the shadow driver has detected a violation.
 - code: 0x00000115
   name: AGP_INTERNAL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x115---agp-internal
+  description: This indicates that the accelerated graphics port (AGP) driver has detected a violation.
 - code: 0x00000116
   name: VIDEO_TDR_FAILURE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x116---video-tdr-failure
+  description: This bug check indicates that an attempt to reset the display driver and recover from a timeout has failed.
+  parameters:
+    - The pointer to the internal TDR recovery context, if available.
+    - A pointer into the responsible device driver module (for example, the owner tag).
+    - The error code of the last failed operation, if available.
+    - Internal context dependent data, if available.
 - code: 0x00000117
   name: VIDEO_TDR_TIMEOUT_DETECTED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x117---video-tdr-timeout-detected
+  description: This indicates that the display driver failed to respond in a timely fashion. (This code can never be used for a real bug check; it is used to identify live dumps.)
+  parameters:
+    - The pointer to the internal TDR recovery context, if available.
+    - A pointer into the responsible device driver module (for example, the owner tag).
+    - The secondary driver-specific bucketing key.
+    - Internal context dependent data, if available.
 - code: 0x00000119
   name: VIDEO_SCHEDULER_INTERNAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x119---video-scheduler-internal-error
+  description: This bug check indicates that the video scheduler has detected a fatal violation.
 - code: 0x0000011A
   name: EM_INITIALIZATION_FAILURE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x11a---em-initialization-failure
 - code: 0x0000011B
   name: DRIVER_RETURNED_HOLDING_CANCEL_LOCK
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x11b---driver-returned-holding-cancel-lock
+  description: This bug check indicates that a driver has returned from a cancel routine that holds the global cancel lock. This causes all later cancellation calls to fail, and results in either a deadlock or another bug check.
 - code: 0x0000011C
   name: ATTEMPTED_WRITE_TO_CM_PROTECTED_STORAGE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x11c--attempted-write-to-cm-protected-storage
+  description: This bug check indicates that an attempt was made to write to the read-only protected storage of the configuration manager.
+  parameters:
+    - Virtual address for the attempted write
+    - PTE contents
+    - Reserved
+    - Reserved
 - code: 0x0000011D
   name: EVENT_TRACING_FATAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x11d---event-tracing-fatal-error
+  description: This bug check indicates that the Event Tracing subsystem has encountered an unexpected fatal error.
 - code: 0x0000011E
   name: TOO_MANY_RECURSIVE_FAULTS
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x11e--too-many-recursive-faults
+  description: This indicates that a file system has caused too many recursive faults under low resource conditions to be handled.
 - code: 0x0000011F
   name: INVALID_DRIVER_HANDLE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x11f--invalid-driver-handle
+  description: This indicates that someone has closed the initial handle for a driver between inserting the driver object and referencing the handle.
+  parameters:
+    - The handle value for the driver object.
+    - The status returned trying to reference the object.
+    - The address of the PDRIVER_OBJECT.
+    - Reserved
 - code: 0x00000120
   name: BITLOCKER_FATAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x120--bitlocker-fatal-error-
+  description: This indicates that BitLocker drive encryption encountered a problem that it cannot recover from.
+  parameters:
+    - Type of problem
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x00000121
   name: DRIVER_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x121---driver-violation
+  description: This bug check indicates that a driver has caused a violation.
 - code: 0x00000122
   name: WHEA_INTERNAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x122---whea-internal-error
+  description: This bug check indicates that an internal error in the Windows Hardware Error Architecture (WHEA) has occurred. Errors can result from a bug in the implementation of a platform-specific hardware error driver (PSHED) plug-in supplied by a vendor, the firmware implementation of error records, or the firmware implementation of error injection.
 - code: 0x00000123
   name: CRYPTO_SELF_TEST_FAILURE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x123--crypto-self-test-failure-
+  description: This indicates that the cryptographic subsystem failed a mandatory algorithm self-test during bootstrap.
 - code: 0x00000124
   name: WHEA_UNCORRECTABLE_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x124---whea-uncorrectable-error
+  description: This indicates that a fatal hardware error has occurred. This bug check uses the error data provided by the Windows Hardware Error Architecture (WHEA).
 - code: 0x00000125
   name: NMR_INVALID_STATE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x125--nmr-invalid-state
+  description: This indicates that NMR (network module registrar) has detected an invalid state.
 - code: 0x00000126
   name: NETIO_INVALID_POOL_CALLER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x126--netio-invalid-pool-caller
+  description: This indicates that an invalid pool request has been made to netio managed memory pool, e.g. FSB and MDL.
 - code: 0x00000127
   name: PAGE_NOT_ZERO
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x127---page-not-zero
+  description: This bug check indicates that a page that should have been filled with zeros was not. This bug check might occur because of a hardware error or because a privileged component of the operating system modified a page after freeing it.
+  parameters:
+    - Virtual address that maps the corrupted page
+    - Physical page number
+    - Zero (Reserved)
+    - Zero (Reserved)
 - code: 0x00000128
   name: WORKER_THREAD_RETURNED_WITH_BAD_IO_PRIORITY
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x128--worker-thread-returned-with-bad-io-priority
+  description: This indicates that a worker threads IOPriority was wrongly modified by the called worker routine.
+  parameters:
+    - Address of worker routine
+    - Current IoPrioirity value
+    - Workitem parameter
+    - Workitem address
 - code: 0x00000129
   name: WORKER_THREAD_RETURNED_WITH_BAD_PAGING_IO_PRIORITY
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x129--worker-thread-returned-with-bad-paging-io-priority
+  description: This indicates that a worker threads Paging IOPriority was wrongly modified by the called worker routine.
+  parameters:
+    - Address of worker routine
+    - Current Paging IoPrioirity value
+    - Workitem parameter
+    - Workitem address
 - code: 0x0000012A
   name: MUI_NO_VALID_SYSTEM_LANGUAGE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x12a--mui-no-valid-system-language
+  description: This indicates that Windows did not find any installed, licensed language packs for the system default UI language.
+  parameters:
+    - |-
+      The subtype of the bugcheck
+
+      0x1 : Windows did not find any installed language packs during phase I initialization.
+      Parameter 2 - NT status code that describes the reason of failure.
+
+      0x2 : Windows did not find any installed, licensed language packs for the system default UI language during kernel cache creation.
+      Parameter 2 - NT status code that describes the reason of failure.
+    - See parameter 1
+    - Reserved
+    - Reserved
 - code: 0x0000012B
   name: FAULTY_HARDWARE_CORRUPTED_PAGE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x12b---faulty-hardware-corrupted-page
+  description: This bug check indicates that the Windows memory manager detected corruption. That corruption could only have been caused by a component accessing memory using physical addressing.
 - code: 0x0000012C
   name: EXFAT_FILE_SYSTEM
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x12c---exfat-file-system
+  description: This bug check indicates that a problem occurred in the Extended File Allocation Table (exFAT) file system.
+  parameters:
+    - Specifies source file and line number information. The high 16 bits (the first four hexadecimal digits after the "0x") determine the source file by its identifier number. The low 16 bits determine the source line in the file where the bug check occurred.
+    - If `FppExceptionFilter` is on the stack, this parameter specifies the address of the exception record.
+    - If `FppExceptionFilter` is on the stack, this parameter specifies the address of the context record.
+    - Reserved.
 - code: 0x0000012D
   name: VOLSNAP_OVERLAPPED_TABLE_ACCESS
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x12d--volsnap-overlapped-table-access
+  description: This indicates that volsnap tried to access a common table from two different threads which may result in table corruption and eventually corrupt the table.
 - code: 0x0000012E
   name: INVALID_MDL_RANGE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x12e--invalid-mdl-range
+  description: This indicates that a driver has called the IoBuildPartialMdl() function and passed it an MDL to map part of a source MDL, but the virtual address range specified is outside the range in the source MDL. This is typically a driver bug.
+  parameters:
+    - SourceMdl
+    - TargetMdl
+    - VirtualAddress
+    - Length
 - code: 0x0000012F
   name: VHD_BOOT_INITIALIZATION_FAILED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x12f--vhd-boot-initialization-failed
+  description: This indicates that an initialization failure occurred while attempting to boot from a VHD.
+  parameters:
+    - |-
+      Action that failed
+      1: Couldn't extract VHD information from boot device.
+      2: Timeout waiting for VHD parent device to surface.
+      3: VHD path string memory allocation error.
+      4: VHD path construction failed.
+      5: VHD boot device mount failed.
+      6: Disable sleep states failed.
+      7: VHD information memory allocation error.
+      8: VHD information construction failed.
+    - NT status code
+    - Reserved
+    - Reserved
 - code: 0x00000130
   name: DYNAMIC_ADD_PROCESSOR_MISMATCH
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x130--dynamic-add-processor-mismatch
+  description: This bugcheck indicates that a new processor added to the system is incompatible with the current configuration.
 - code: 0x00000131
   name: INVALID_EXTENDED_PROCESSOR_STATE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x131--invalid-extended-processor-state
+  description: This indicates that an invalid combination of parameters was detected while saving or restoring extended processor state.
 - code: 0x00000132
   name: RESOURCE_OWNER_POINTER_INVALID
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x132--resource-owner-pointer-invalid
+  description: This indicates that an invalid resource owner pointer was supplied.
+  parameters:
+    - Resource
+    - Resource->OwnerTable
+    - CurrentThread
+    - OwnerPointer
 - code: 0x00000133
   name: DPC_WATCHDOG_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x133-dpc-watchdog-violation
+  description: This bug check indicates that the DPC watchdog executed, either because it detected a single long-running deferred procedure call (DPC), or because the system spent a prolonged time at an interrupt request level (IRQL) of DISPATCH_LEVEL or above.
 - code: 0x00000134
   name: DRIVE_EXTENDER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x134--drive-extender
+  description: This indicates that the drive extender component has experienced a severe internal error that prevents continued system operation.
 - code: 0x00000135
   name: REGISTRY_FILTER_DRIVER_EXCEPTION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x135--registry-filter-driver-exception
+  description: This bugcheck is caused by an unhandled exception in a registry filtering driver.
+  parameters:
+    - Exception Code
+    - Address of the context record for the exception that caused the bugcheck
+    - The driver's callback routine address
+    - Reserved
 - code: 0x00000136
   name: VHD_BOOT_HOST_VOLUME_NOT_ENOUGH_SPACE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x136--vhd-boot-host-volume-not-enough-space
+  description: This indicates that an initialization failure occurred while attempting to boot from a VHD. The volume that hosts the VHD does not have enough free space to expand the VHD.
+  parameters:
+    - "0: Unable to expand VHD file to full size."
+    - NT Status Code
+    - Reserved
+    - Reserved
 - code: 0x00000137
   name: WIN32K_HANDLE_MANAGER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x137--win32k-handle-manager
+  description: This indicates that the win32k/ntuser handle manager has detected a fatal error.
+  parameters:
+    - Reserved
+    - Address of the object (If available)
+    - Reserved
+    - Reserved
 - code: 0x00000138
   name: GPIO_CONTROLLER_DRIVER_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x138-gpio-controller-driver-error
+  description: This bug check indicates that the GPIO class extension driver encountered a fatal error.
 - code: 0x00000139
   name: KERNEL_SECURITY_CHECK_FAILURE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x139--kernel-security-check-failure
+  description: This bug check indicates that the kernel has detected the corruption of a critical data structure.
+  parameters:
+    - The type of corruption. For more information, see the following table.
+    - Address of the trap frame for the exception that caused the bug check
+    - Address of the exception record for the exception that caused the bug check
+    - Reserved
 - code: 0x0000013A
   name: KERNEL_MODE_HEAP_CORRUPTION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x13a--kernel-mode-heap-corruption
+  description: This bug check indicates that the kernel mode heap manager has detected corruption in a heap.
+  parameters:
+    - Type of corruption detected - see the following list
+    - Address of the heap that reported the corruption
+    - Address at which the corruption was detected
+    - Reserved
 - code: 0x0000013B
   name: PASSIVE_INTERRUPT_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x13b--passive-interrupt-error
+  description: This indicates that the kernel has detected issues with the passive-level interrupt.
+  parameters:
+    - |-
+      Type of error detected
+      0x1 : A driver tried to acquire an interrupt spinlock but passed in a passive-level interrupt object.
+    - Address of the KINTERRUPT object for the passive-level interrupt.
+    - Reserved
+    - Reserved
 - code: 0x0000013C
   name: INVALID_IO_BOOST_STATE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x13c--invalid-io-boost-state
+  description: This indicates that a thread exited with an invalid I/O boost state. This should be zero when a thread exits.
+  parameters:
+    - Pointer to the thread which had the invalid boost state
+    - Current boost state or throttle count
+    - Reserved
+    - Reserved
 - code: 0x0000013D
   name: CRITICAL_INITIALIZATION_FAILURE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x13d--critical-initialization-failure
+  description: This indicates that early kernel initialization has failed.
+  parameters:
+    - Reserved
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x00000140
   name: STORAGE_DEVICE_ABNORMALITY_DETECTED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x140--storage-device-abnormality-detected
+  description: This indicates that the storage driver stack encountered rate of responsiveness violations, exceeding the threshold, or other failures to respond.
 - code: 0x00000143
   name: PROCESSOR_DRIVER_INTERNAL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x143--processor-driver-internal
+  description: This indicates that the Processor Power Management (PPM) driver encountered a fatal error.
 - code: 0x00000144
   name: BUGCODE_USB3_DRIVER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x144--bugcode-usb3-driver
+  description: This is the code used for all USB 3 bug checks. Parameter 1 specifies the type of the USB 3 bug check, and the meanings of the other parameters are dependent on Parameter 1.
 - code: 0x00000145
   name: SECURE_BOOT_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x145--secure-boot-violation-
+  description: This indicates that the secure Boot policy enforcement could not be started due to an invalid policy or a required operation not being completed.
+  parameters:
+    - The status code of the failure.
+    - Address of the Secure Boot policy.
+    - Size of the Secure Boot policy.
+    - Reserved
 - code: 0x00000147
   name: ABNORMAL_RESET_DETECTED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x147--abnormal-reset-detected
+  description: This indicates that Windows underwent an abnormal reset. No context or exception records were saved, and bugcheck callbacks were not called.
 - code: 0x00000149
   name: REFS_FILE_SYSTEM
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x149--refs-file-system
+  description: This indicates that a file system error has occurred.
+  parameters:
+    - \_\_LINE\_\_
+    - ExceptionRecord
+    - ContextRecord
+    - ExceptionRecord->ExceptionAddress
 - code: 0x0000014A
   name: KERNEL_WMI_INTERNAL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x14a--kernel-wmi-internal
+  description: This indicates that the internal kernel WMI subsystem has encountered a fatal error.
+  parameters:
+    - |-
+      0: A kernel WMI entry reference count was incremented from 0.
+      Parameter 2: Pointer to the kernel WMI entry.
+
+      1: A kernel WMI datasource was removed prematurely.
+      Parameter 2: Pointer to the kernel WMI datasource.
+    - See parameter 1
+    - Reserved
+    - Reserved
 - code: 0x0000014B
   name: SOC_SUBSYSTEM_FAILURE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x14b--soc-subsystem-failure
+  description: This indicates that an unrecoverable error was encountered in a System on a Chip (SoC) subsystem.
+  parameters:
+    - Address of an `SOC_SUBSYSTEM_FAILURE_DETAILS` structure.
+    - Reserved.
+    - Reserved.
+    - Optional. Address of a vendor-supplied data block.
 - code: 0x0000014C
   name: FATAL_ABNORMAL_RESET_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x14c--fatal-abnormal-reset-error
+  description: This indicates that an unrecoverable system error occurred or the system has abnormally reset.
 - code: 0x0000014D
   name: EXCEPTION_SCOPE_INVALID
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x14d--exception-scope-invalid
+  description: This indicates that an internal inconsistency in exception dispatching has been detected.
+  parameters:
+    - Reserved
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x0000014E
   name: SOC_CRITICAL_DEVICE_REMOVED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x14e--soc-critical-device-removed
+  description: This indicates that a critical SOC device has been unexpectedly removed or failed.
+  parameters:
+    - When available, indicates the ID of the device which was removed (4 character packed code)
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x0000014F
   name: PDC_WATCHDOG_TIMEOUT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x14f--pdc-watchdog-timeout
+  description: This indicates that a system component failed to respond within the allocated time period, preventing the system from exiting connected standby.
 - code: 0x00000150
   name: TCPIP_AOAC_NIC_ACTIVE_REFERENCE_LEAK
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x150--tcpip-aoac-nic-active-reference-leak
+  description: This indicates that the NIC active reference should have been released when the send queue was fully drained.
 - code: 0x00000151
   name: UNSUPPORTED_INSTRUCTION_MODE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x151--unsupported-instruction-mode
+  description: This indicates that an attempt was made to execute code using an unsupported processor instruction mode (for example, executing classic Arm instructions instead of ThumbV2 instructions). This is not permitted.
+  parameters:
+    - Program counter when the problem was detected.
+    - Trap Frame
+    - Reserved
+    - Reserved
 - code: 0x00000152
   name: INVALID_PUSH_LOCK_FLAGS
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x152--invalid-push-lock-flags
+  description: This indicates that the flags supplied to one of push lock APIs were invalid.
+  parameters:
+    - The invalid flags supplied by the caller
+    - The address of the push lock
+    - Reserved
+    - Reserved
 - code: 0x00000153
   name: KERNEL_LOCK_ENTRY_LEAKED_ON_THREAD_TERMINATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x153--kernel-lock-entry-leaked-on-thread-termination
+  description: This indicates that a thread was terminated before it had freed all its AutoBoost lock entries.
+  parameters:
+    - The address of the thread
+    - The address of the entry that was not freed
+    - |-
+      A status code indicating the state of the entry
+      0x1: Lock pointer was not NULL
+      0x2: Thread pointer reserved bits were set
+      0x3: Thread pointer was corrupted
+      0x4: The entry had residual IO or CPU boosts left
+    - Reserved
 - code: 0x00000154
   name: UNEXPECTED_STORE_EXCEPTION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x154--unexpected-store-exception
+  description: This bug check indicates that the kernel memory store component caught an unexpected exception.
+  parameters:
+    - Pointer to the store context or data manager
+    - Exception information
+    - Reserved
+    - Reserved
 - code: 0x00000155
   name: OS_DATA_TAMPERING
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x155--os-data-tampering
 - code: 0x00000157
   name: KERNEL_THREAD_PRIORITY_FLOOR_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x157--kernel-thread-priority-floor-violation
+  description: This indicates that an illegal operation was attempted on the priority floor of a particular thread.
+  parameters:
+    - The address of the thread
+    - The target priority value
+    - |-
+      A status code indicating the nature of the violation
+      0x1: The priority counter for the target priority over-flowed
+      0x2: The priority counter for the target priority under-flowed
+      0x3: The target priority value was illegal
+    - Reserved
 - code: 0x00000158
   name: ILLEGAL_IOMMU_PAGE_FAULT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x158--illegal-iommu-page-fault
+  description: This indicates that the IOMMU has delivered a page fault packet for an invalid ASID. This is not safe since the ASID may have already been reused.
+  parameters:
+    - The invalid ASID.
+    - The number of ASIDs currently in use.
+    - The process using this ASID.
+    - The ASID's reference count.
 - code: 0x00000159
   name: HAL_ILLEGAL_IOMMU_PAGE_FAULT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x159--hal-illegal-iommu-page-fault
+  description: This indicates that the IOMMU has delivered a page fault against an ASID that was in the process of being freed. The driver was responsible for completing any inflight requests before this point in time and this bugcheck indicates a driver in the system did not do so.
+  parameters:
+    - IOMMU Vendor disambiguation
+    - Pointer to fault packet
+    - Vendor specific fault packet data
+    - Vendor specific fault packet data
 - code: 0x0000015A
   name: SDBUS_INTERNAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x15a--sdbus-internal-error
+  description: This indicates that an unrecoverable hardware failure has occurred on an SD-attached device.
+  parameters:
+    - Pointer to the internal SD work packet that caused the failure
+    - Pointer the controller socket information
+    - Pointer to the SD request packet sent down to the bus driver
+    - Reserved
 - code: 0x0000015B
   name: WORKER_THREAD_RETURNED_WITH_SYSTEM_PAGE_PRIORITY_ACTIVE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x15b--worker-thread-returned-with-system-page-priority-active
+  description: This indicates that a worker thread's system page priority was leaked by the called worker routine.
+  parameters:
+    - Address of worker routine
+    - Current system page priority value
+    - WorkItem parameter
+    - WorkItem address
 - code: 0x00000160
   name: WIN32K_ATOMIC_CHECK_FAILURE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x160--win32k-atomic-check-failure
+  description: This indicates that a Win32k function has violated an ATOMICCHECK.
+  parameters:
+    - Count of functions on the stack currently inside of an ATOMIC operation
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x00000162
   name: KERNEL_AUTO_BOOST_INVALID_LOCK_RELEASE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x162--kernel-auto-boost-invalid-lock-release
+  description: This indicates that a lock tracked by AutoBoost was released by a thread that did not own the lock.
+  parameters:
+    - The address of the thread
+    - The lock address
+    - The session ID of the thread
+    - Reserved
 - code: 0x00000163
   name: WORKER_THREAD_TEST_CONDITION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x162--worker-thread-test-condition
+  description: This indicates that a test for kernel worker threads raised a failure.
+  parameters:
+    - Active test flags
+    - Flag corresponding to the test that triggered the failure
+    - Reserved
+    - Reserved
 - code: 0x00000164
   name: WIN32K_CRITICAL_FAILURE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x164--win32k-critical-failure
+  description: This indicates that Win32k has encountered a critical failure.
 - code: 0x0000016C
   name: INVALID_RUNDOWN_PROTECTION_FLAGS
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x16c--invalid-rundown-protection-flags
+  description: This indicates that the flags supplied to one of the rundown protection APIs were invalid.
+  parameters:
+    - The invalid flags supplied by the caller
+    - The address of the rundown ref
+    - Reserved
+    - Reserved
 - code: 0x0000016D
   name: INVALID_SLOT_ALLOCATOR_FLAGS
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x16d--invalid-slot-allocator-flags
+  description: This indicates that the flags supplied to one of the slot allocator APIs were invalid.
+  parameters:
+    - The invalid flags supplied by the caller
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x0000016E
   name: ERESOURCE_INVALID_RELEASE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x16e--eresource-invalid-release
+  description: This indicates that the target thread pointer supplied to ExReleaseResourceForThreadLite was invalid.
+  parameters:
+    - The resource being released
+    - The current thread
+    - The incorrect target thread that was passed in
+    - Reserved
 - code: 0x00000170
   name: CLUSTER_CSV_CLUSSVC_DISCONNECT_WATCHDOG
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x170--cluster-csv-clussvc-disconnect-watchdog
+  description: This indicates that Cluster disconnect is not making forward progress.
+  parameters:
+    - Id of the thread that is handling cluster disconnect.
+    - Timeout in milliseconds.
+    - Reserved
+    - Reserved
 - code: 0x00000171
   name: CRYPTO_LIBRARY_INTERNAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x171--crypto-library-internal-error
+  description: It indicates that an internal error in the crypto libraries occurred.
+  parameters:
+    - ID of failure.
+    - Reserved.
+    - Reserved.
+    - Reserved.
 - code: 0x00000173
   name: COREMSGCALL_INTERNAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x173--coremsgcall-internal-error
+  description: This indicates that the CoreMessageCall detected an unrecoverable error.
+  parameters:
+    - Type of the failure.
+    - Reserved.
+    - Reserved.
+    - Reserved.
 - code: 0x00000174
   name: COREMSG_INTERNAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x174--coremsg-internal-error
+  description: This indicates that CoreMessaging detected an unrecoverable error.
+  parameters:
+    - Type of the failure.
+    - Reserved.
+    - Reserved.
+    - Reserved.
 - code: 0x00000178
   name: ELAM_DRIVER_DETECTED_FATAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x178--elam-driver-detected-fatal-error
+  description: This indicates that ELAM driver detected a fatal error.
+  parameters:
+    - |-
+      Type of the failure.
+      0x0: TPM attestation could not be revoked
+      2 - Pointer to the BDCB_IMAGE_INFORMATION structure for the driver being inspected 3 - TBS_RESULT failure code
+
+      0x10000: ELAM-vendor defined failure
+      2 - (Optional) ELAM vendor supplied value
+      3 - (Optional) ELAM vendor supplied value
+    - See parameter 1
+    - See parameter 1
+    - (Optional) ELAM vendor supplied general purpose data block
 - code: 0x0000017B
   name: PROFILER_CONFIGURATION_ILLEGAL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x17b--profiler-configuration-illegal
 - code: 0x0000017E
   name: MICROCODE_REVISION_MISMATCH
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x17e--microcode-revision-mismatch
+  description: It indicates that one or more processors in the multiprocessor configuration have inconsistent microcode loaded.
+  parameters:
+    - The processor CPUID signature value of the processor that mismatched.
+    - The expected microcode revision for the processor.
+    - The actual, reported microcode revision for the processor.
+    - The processor index of the mismatching processor.
 - code: 0x00000187
   name: VIDEO_DWMINIT_TIMEOUT_FALLBACK_BDD
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x187--video-dwminit-timeout-fallback-bdd
+  description: This indicates that video fell back to BDD rather than using the IHV driver. This always generates a live dump. (This code can never be used for a real bug check; it is used to identify live dumps.)
+  parameters:
+    - |-
+      Reason Code.
+      0x1: DWM failed to initialize after retries, stopping display adapters and falling back to BDD
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x00000189
   name: BAD_OBJECT_HEADER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x189--bad-object-header
+  description: This indicates that The OBJECT_HEADER has been corrupted.
+  parameters:
+    - Pointer to bad OBJECT_HEADER
+    - Pointer to the resulting OBJECT_TYPE based on the TypeIndex in the OBJECT_HEADER
+    - |-
+      Type of corruption.
+      0x0: The type index is corrupt
+      0x1: The object security descriptor is invalid
+    - Reserved
 - code: 0x0000018B
   name: SECURE_KERNEL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x18b--secure-kernel-error
+  description: This indicates that the secure kernel has encountered a fatal error.
+  parameters:
+    - Reserved
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x0000018C
   name: HYPERGUARD_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x18c--hyperguard-violation
+  description: This indicates that the kernel has detected that critical kernel code or data have been corrupted.
+  parameters:
+    - Type of corrupted region - values listed below.
+    - Failure type dependent information.
+    - Reserved.
+    - Reserved.
 - code: 0x0000018D
   name: SECURE_FAULT_UNHANDLED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x18d--secure-fault-unhandled
+  description: This bug check indicates that a secure fault originated by the secure kernel could not be handled.
+  parameters:
+    - Secure fault code bitmask - values below.
+    - Secure fault VA (only applicable to certain secure fault types).
+    - Exception Record.
+    - Context Record.
 - code: 0x0000018E
   name: KERNEL_PARTITION_REFERENCE_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x18e--kernel-partition-reference-violation
+  description: This error indicates that a partition was improperly dereferenced. This normally occurs when a kernel-mode driver doesn't properly dereference partition objects. It can also occur when a serious data corruption occurs in the kernel.
 - code: 0x00000191
   name: PF_DETECTED_CORRUPTION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x191--pf-detected-corruption
 - code: 0x00000192
   name: KERNEL_AUTO_BOOST_LOCK_ACQUISITION_WITH_RAISED_IRQL
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x192--kernel-auto-boost-lock-acquisition-with-raised-irql
+  description: This indicates that a lock tracked by AutoBoost was acquired while executing at DISPATCH_LEVEL or above.
+  parameters:
+    - The address of the thread
+    - The lock address
+    - The IRQL at which the lock was acquired
+    - Reserved
 - code: 0x00000196
   name: LOADER_ROLLBACK_DETECTED
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x196--loader-rollback-detected
+  description: This indicates that the version of the OS loader does not match the operating system.
+  parameters:
+    - Loader security version
+    - OS security version
+    - Reserved
+    - Reserved
 - code: 0x00000197
   name: WIN32K_SECURITY_FAILURE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x197--win32k-security-failure
+  description: This indicates a security failure was detected in win32k.
+  parameters:
+    - |-
+      Failure type
+      0x1: An objects handle entry didn't point back to the object.
+      2 - Pointer to the object type
+      3 - Pointer to the object handle entry
+      4 - Expected object
+    - See parameter 1
+    - See parameter 1
+    - See parameter 1
 - code: 0x00000199
   name: KERNEL_STORAGE_SLOT_IN_USE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x199--kernel-storage-slot-in-use
+  description: This indicates that the storage slot cannot be freed because there is an object using it.
+  parameters:
+    - The address of the storage array
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x0000019A
   name: WORKER_THREAD_RETURNED_WHILE_ATTACHED_TO_SILO
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x19a--worker-thread-returned-while-attached-to-silo
+  description: This indicates that a worker thread attached to a silo and did not detach before returning.
+  parameters:
+    - Address of worker routine
+    - Workitem parameter
+    - Workitem address
+    - Reserved
 - code: 0x0000019B
   name: TTM_FATAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x19b--ttm-fatal-error
+  description: This indicates that the terminal topology manager experienced a fatal error.
+  parameters:
+    - |-
+      Failure type
+      0x1: An terminal object could not be generated.
+      2 - The NT status code of the failure
+      3 - Reserved
+      4 - Reserved
+    - See parameter 1
+    - See parameter 1
+    - See parameter 1
 - code: 0x0000019C
   name: WIN32K_POWER_WATCHDOG_TIMEOUT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x19c--win32k-power-watchdog-timeout
+  description: This indicates that Win32k did not turn the monitor on in a timely manner.
 - code: 0x000001A0
   name: TTM_WATCHDOG_TIMEOUT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1a0--ttm-watchdog-timeout
 - code: 0x000001A2
   name: WIN32K_CALLOUT_WATCHDOG_BUGCHECK
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1a2--win32k-callout-watchdog-bugcheck
+  description: It indicates that a callout to Win32k did not return promptly.
+  parameters:
+    - Thread blocking prompt return from a Win32k callout.
+    - Reserved.
+    - Reserved.
+    - Reserved.
 - code: 0x000001AA
   name: EXCEPTION_ON_INVALID_STACK
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1aa-exception-on-invalid-stack
+  description: This BugCheck indicates that exception dispatch crossed over into an invalid kernel stack. This might indicate that the kernel stack pointer has become corrupted during exception dispatch or unwind (e.g. due to stack corruption of a frame pointer), or that a driver is executing off of a stack that is not a legal kernel stack.
+  parameters:
+    - A pointer to the current stack.
+    - |-
+      The Type of stack limit such as NormalStackLimits (3). Because the stack is invalid, this represents the kernel's best estimation as to the type of kernel stack that should be active given the state of the machine.
+
+      Stack limit type:
+      * 0x0 - Bugcheck stack (any stack if stack limits are computed during bugcheck time)
+      * 0x1 - A processor DPC stack
+      * 0x2 - A KeExpandKernelStackAndCallout(Ex) stack
+      * 0x3 - A normal kernel thread stack
+      * 0x4 - A kernel thread stack during thread context swap (ambiguous which thread is active)
+      * 0x5 - A win32k kernel/user callout stack
+      * 0x6 - A processor ISR stack
+      * 0x7 - Kernel debugger stack (any stack when the kernel debugger is handling KD I/O)
+      * 0x8 - A processor NMI handling stack
+      * 0x9 - A processor machine check handling stack
+      * 0xA - A processor exception stack (used to dispatch certain raised IRQL exceptions)
+    - A pointer to the context record representing the context that was being unwound (or dispatched for an exception) when the invalid stack was encountered.
+    - Supplies an exception record representing the active exception that was being dispatched.
 - code: 0x000001AB
   name: UNWIND_ON_INVALID_STACK
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1ab-unwind-on-invalid-stack
+  description: It indicates that an attempt was made to access memory outside of the valid kernel stack range. In particular, this BugCheck indicates that stack unwinding crossed over into an invalid kernel stack. This might indicate that the kernel stack pointer has become corrupted during exception dispatch or unwind (e.g. due to stack corruption of a frame pointer), or that a driver is executing off of a stack that is not a legal kernel stack. At the time the invalid access occurred, the exception record was not available.
+  parameters:
+    - A pointer to the current stack.
+    - |-
+      The Type of stack limit such as NormalStackLimits (3). Because the stack is invalid, this represents the kernel's best estimation as to the type of kernel stack that should be active given the state of the machine.
+
+      Stack limit type:
+      * 0x0 - Bugcheck stack (any stack if stack limits are computed during bugcheck time)
+      * 0x1 - A processor DPC stack
+      * 0x2 - A KeExpandKernelStackAndCallout(Ex) stack
+      * 0x3 - A normal kernel thread stack
+      * 0x4 - A kernel thread stack during thread context swap (ambiguous which thread is active)
+      * 0x5 - A win32k kernel/user callout stack
+      * 0x6 - A processor ISR stack
+      * 0x7 - Kernel debugger stack (any stack when the kernel debugger is handling KD I/O)
+      * 0x8 - A processor NMI handling stack
+      * 0x9 - A processor machine check handling stack
+      * 0xA - A processor exception stack (used to dispatch certain raised IRQL exceptions)
+    - A pointer to the context record representing the context that was being unwound (or dispatched for an exception) when the invalid stack was encountered.
+    - ExceptionRecord - Reserved and always 0 for UNWIND_ON_INVALID_STACK.
 - code: 0x000001C6
   name: FAST_ERESOURCE_PRECONDITION_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1c6--fast-eresource-precondition-violation
+  description: It indicates that a current thread is performing an invalid call to a fast resource routine.
 - code: 0x000001C7
   name: STORE_DATA_STRUCTURE_CORRUPTION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1c7--store-data-structure-corruption
+  description: It indicates that the store component detected a corruption in its data structures.
 - code: 0x000001C8
   name: MANUALLY_INITIATED_POWER_BUTTON_HOLD
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1c8--manually-initiated-power-button-hold
+  description: The system was configured to initiate a bugcheck when the user holds the power button for a specified length of time. This is a diagnostic bugcheck used to capture a dump when the system is about to be hard reset with a long power button hold.
+  parameters:
+    - Time in milliseconds the power button was held down.
+    - Pointer to nt!_POP_POWER_BUTTON_TRIAGE_BLOCK.
+    - Reserved.
+    - Reserved.
 - code: 0x000001CA
   name: SYNTHETIC_WATCHDOG_TIMEOUT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1ca--synthetic-watchdog-timeout
+  description: A system wide watchdog has expired. This indicates that the system is hung and not processing timer ticks.
+  parameters:
+    - The time since the watchdog was last reset, in interrupt time.
+    - The current interrupt time.
+    - The current QPC timestamp.
+    - The index of the clock processor.
 - code: 0x000001CB
   name: INVALID_SILO_DETACH
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1cb--invalid-silo-detach
+  description: It indicates that a thread failed to detach from a silo before exiting.
+  parameters:
+    - Pointer to the attached thread.
+    - Previously attached silo.
+    - Pointer to the thread's process.
+    - Reserved.
 - code: 0x000001CD
   name: INVALID_CALLBACK_STACK_ADDRESS
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1cd--invalid-callback-stack-address
+  description: The callback stack is a user mode address which is illegal.
 - code: 0x000001CE
   name: INVALID_KERNEL_STACK_ADDRESS
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1ce--invalid-kernel-stack-address
+  description: An invalid initial kernel stack address was encountered during the context switch.
 - code: 0x000001CF
   name: HARDWARE_WATCHDOG_TIMEOUT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1cf--hardware-watchdog-timeout
+  description: This indicates that the system is hung and not processing timer ticks.
+  parameters:
+    - The time since the watchdog was last reset, in interrupt time.
+    - The current interrupt time.
+    - The current QPC timestamp.
+    - The index of the clock processor.
 - code: 0x000001D0
-  name: CPI_FIRMWARE_WATCHDOG_TIMEOUT
+  name: ACPI_FIRMWARE_WATCHDOG_TIMEOUT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1d0--acpi-firmware-watchdog-timeout
+  description: ACPI driver failed to complete an operation in expected alloted time.
+  parameters:
+    - Pointer to AMLI Context
+    - Pointer to Unicode Name of the Aml Context
+    - Pointer to ACPI Device Extension.
+    - Pointer to ACPI Triage Block.
 - code: 0x000001D2
   name: WORKER_THREAD_INVALID_STATE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1d2--worker-thread-invalid-state
+  description: This error indicates that an executive worker thread is in an invalid state.
+  parameters:
+    - Type of failure
+    - Address of the worker thread
+    - Reserved
+    - Reserved
 - code: 0x000001D3
   name: WFP_INVALID_OPERATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1d3--wfp-invalid-operation
+  description: This indicates that a Windows Filtering Platform callout performed an invalid operation.
 - code: 0x000001D5
   name: DRIVER_PNP_WATCHDOG
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1d5--driver-pnp-watchdog
+  description: This indicates that a driver has failed to complete a PnP operation within a specific time.
+  parameters:
+    - First few character of the service associated with the devnode.
+    - Pointer to the nt!TRIAGE_PNP_WATCHDOG on Win10 RS4 and higher.
+    - Thread responsible for the PnP Watchdog.
+    - Milliseconds elapsed since the watchdog was armed.
 - code: 0x000001D6
   name: WORKER_THREAD_RETURNED_WITH_NON_DEFAULT_WORKLOAD_CLASS
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1d6--worker-thread-returned-with-non-default-workload-class
+  description: It indicates that a worker thread changed its workload class and did not revert it before returning.
+  parameters:
+    - Address of worker routine
+    - Current workload class value.
+    - WorkItem parameter.
+    - WorkItem address.
 - code: 0x000001D7
   name: EFS_FATAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1d7--efs-fatal-error
+  description: It indicates that an EFS error condition has occurred such that cannot be handled without data loss or data corruption.
+  parameters:
+    - |-
+      Bug Check Subclass:
+      01 - Pre-offloading failure.
+    - NTSTATUS return code of the operation.
+    - The current IRP at the time of failure.
+    - File encryption context at the time of failure.
 - code: 0x000001D8
   name: UCMUCSI_FAILURE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1d8--ucmucsi-failure
+  description: It indicates that the UCSI class extension has encountered an error.
+  parameters:
+    - |-
+      Type of failure.
+      VALUES:
+      0x0 : A UCSI command has timed out because the firmware did not respond to the command in time.
+      0x1 : A UCSI command execution failed either because the client driver returned failure or because the firmware returned an error code.
+    - The UCSI command value.
+    - If non-zero, the pointer to additional information (use dt UcmUcsiCx!UCMUCSICX_TRIAGE).
+    - Reserved.
 - code: 0x000001D9
   name: HAL_IOMMU_INTERNAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1d8--ucmucsi-failure
+  description: It indicates that an internal error was detected in the HAL IOMMU library.
 - code: 0x000001DA
   name: HAL_BLOCKED_PROCESSOR_INTERNAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1da--hal-blocked-processor-internal-error
+  description: It indicates that an internal error was detected in the blocked processor library.
 - code: 0x000001DB
   name: IPI_WATCHDOG_TIMEOUT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1db--ipi-watchdog-timeout
+  description: It indicates that a processor has been stuck in an IPI loop for more than the allowed time.
+  parameters:
+    - Indicates QPC frequency.
+    - Indicates the current QPC.
+    - Indicates the baseline QPC.
+    - Reserved.
 - code: 0x000001DC
   name: DMA_COMMON_BUFFER_VECTOR_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1dc--dma-common-buffer-vector-error
+  description: It indicates that a driver has misused the DMA vectored common buffer APIs.
 - code: 0x000001DD
   name: BUGCODE_MBBADAPTER_DRIVER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1dd--bugcode-mbbadapter-driver
+  description: This indicates that the operating system encountered an error caused by a networking driver managed by MBBCx. MBBCx provides mobile broadband (MBB) media-specific functionality in the form of a KMDF-based MBB client driver for MBB devices.
 - code: 0x000001DE
   name: BUGCODE_WIFIADAPTER_DRIVER
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1de--bugcode-wifiadapter-driver
+  description: This indicates that the operating system encountered an error caused by a networking driver managed by WiFiCx. The Wi-Fi WDF class extensions (WiFiCx) supports KMDF-based Wi-Fi client driver for Wi-Fi devices.
 - code: 0x000001DF
   name: PROCESSOR_START_TIMEOUT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1df--processor-start-timeout
+  description: This indicates a processor failed to start in the allowed time. The processor start occurs very early in the operating system initialization.
+  parameters:
+    - Virtual address of the processor state.
+    - Reserved.
+    - NT processor number.
+    - Local unit ID for the processor.
 - code: 0x000001E4
   name: VIDEO_DXGKRNL_SYSMM_FATAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1e4--video-dxgkrnl-sysmm-fatal-error
+  description: This indicates that the Microsoft DirectX graphics kernel system memory manager has detected a violation.
+  parameters:
+    - |-
+      The subcode of the BugCheck
+      0x1: Invalid physical object type
+      0x2: IOMMU enabled with invalid reason
+      0x3: IOMMU disabled with invalid reason
+      0x4: ADL is being built against non-locked memory
+      0x5: Memory is being unlocked while ADLs exist
+      0x6: Adapter objects were leaked
+      0x7: ADL leaked
+      0x8: Logical Block Pool leaked
+      0x9: Logical Block Pool Allocator leaked
+      0xA: Failed Domain Reattach¨
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x000001E9
   name: ILLEGAL_ATS_INITIALIZATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1e9--illegal-ats-initialization
+  description: This indicates that the driver has attempted to illegally enable the Address Translation Service (ATS) on a device which has been already been enabled for Shared Virtual Memory (SVM).
+  parameters:
+    - The physical device object.
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x000001EA
   name: SECURE_PCI_CONFIG_SPACE_ACCESS_VIOLATION
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1ea--secure-pci-config-space-access-violation
+  description: This indicates that the access to the PCI config space region from VTL0 by directly mapping the PCI MCFG range is prohibited because secure PCI is enabled.
+  parameters:
+    - Opcode that caused the exception.
+    - RID of the device that caused the exception.
+    - Config space access offset.
+    - Address of the instruction that caused the exception.
 - code: 0x000001EB
   name: DAM_WATCHDOG_TIMEOUT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1eb--dam-watchdog-timeout
+  description: This indicates that the Desktop Activity Moderator (DAM) was unable to unfreeze non-exempt user session processes within the allocated time period after the device resumed from modern standby.
+  parameters:
+    - Pointer to the DAM user session delay context.
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x000001ED
   name: HANDLE_ERROR_ON_CRITICAL_THREAD
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1ed--handle-error-on-critical-thread
+  description: This indicates that an invalid handle access problem was detected in kernel mode on a system-critical thread.
+  parameters:
+    - Reserved
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x00000356
   name: XBOX_ERACTRL_CS_TIMEOUT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x356--xbox-eractrl-cs-timeout
+  description: The eractrl.sys driver was not able to transition the Xbox console to or from connected standby after an extended amount of time. The eractrl.sys driver is for a KM driver that bootstraps a supporting VM and helps manage the VM lifetime.
+  parameters:
+    - CS exit
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x00000BFE
   name: BC_BLUETOOTH_VERIFIER_FAULT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xbfe--bc-bluetooth-verifier-fault
+  description: This indicates that a driver has caused a violation.
 - code: 0x00000BFF
   name: BC_BTHMINI_VERIFIER_FAULT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xbff--bc-bthmini-verifier-fault
+  description: This indicates that The Bluetooth miniport extensible driver verifier has caught a violation.
 - code: 0x00020001
   name: HYPERVISOR_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x20001--hypervisor-error
+  description: This indicates that the hypervisor has encountered a fatal error.
+  parameters:
+    - Reserved
+    - Reserved
+    - Reserved
+    - Reserved
 - code: 0x1000007E
   name: SYSTEM_THREAD_EXCEPTION_NOT_HANDLED_M
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1000007e--system-thread-exception-not-handled-m
+  description: This indicates that a system thread generated an exception which the error handler did not catch. Bug check 0x1000007E has the same meaning and parameters as bug check 0x7E (SYSTEM_THREAD_EXCEPTION_NOT_HANDLED).
 - code: 0x1000007F
   name: UNEXPECTED_KERNEL_MODE_TRAP_M
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1000007f--unexpected-kernel-mode-trap-m
+  description: This indicates that a trap was generated by the Intel CPU and the kernel failed to catch this trap. Bug check 0x1000007F has the same meaning and parameters as bug check 0x7F (UNEXPECTED_KERNEL_MODE_TRAP).
 - code: 0x1000008E
   name: KERNEL_MODE_EXCEPTION_NOT_HANDLED_M
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x1000008e--kernel-mode-exception-not-handled-m
+  description: This indicates that a kernel-mode program generated an exception which the error handler did not catch. Bug check 0x1000008E has the same meaning and parameters as bug check 0x8E (KERNEL_MODE_EXCEPTION_NOT_HANDLED).
 - code: 0x100000EA
   name: THREAD_STUCK_IN_DEVICE_DRIVER_M
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x100000ea--thread-stuck-in-device-driver-m
+  description: This indicates that a thread in a device driver is endlessly spinning. Bug check 0x100000EA has the same meaning and parameters as bug check 0xEA (THREAD_STUCK_IN_DEVICE_DRIVER).
 - code: 0x4000008A
   name: THREAD_TERMINATE_HELD_MUTEX
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x4000008a--thread-terminate-held-mutex
+  description: This indicates that a driver acquired a mutex on a thread that exited before the mutex could be released. This can be caused by a driver returning to user mode without releasing a mutex or by a driver acquiring a mutex and then causing an exception that results in the thread it is running on, being terminated.
+  parameters:
+    - The address of the KTHREAD that owns the KMUTEX.
+    - The address of the KMUTEX that is owned.
+    - Reserved
+    - Reserved
 - code: 0xC0000218
   name: STATUS_CANNOT_LOAD_REGISTRY_FILE
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xc0000218--status-cannot-load-registry-file
+  description: This indicates that a registry file could not be loaded.
+  parameters:
+    - Address of the name of the registry hive that could not be loaded.
+    - Zero (Reserved)
+    - Zero (Reserved)
+    - Zero (Reserved)
 - code: 0xC000021A
   name: WINLOGON_FATAL_ERROR
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xc000021a--winlogin-fatal-error
+  description: This means that the Winlogon process terminated unexpectedly.
+  parameters:
+    - A string that identifies the problem
+    - The error code
+    - Reserved
+    - Reserved
 - code: 0xC0000221
   name: STATUS_IMAGE_CHECKSUM_MISMATCH
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xc0000221--status-image-checksum-mismatch
+  description: The bug check indicates that a driver or a system DLL is corrupted.
 - code: 0xDEADDEAD
   name: MANUALLY_INITIATED_CRASH1
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0xdeaddead--manually-initiated-crash1
+  description: This indicates that a manually initiated crash occurred.
+  parameters:
+    - Reserved
+    - Reserved
+    - Reserved
+    - Reserved
