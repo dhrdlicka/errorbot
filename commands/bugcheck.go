@@ -65,6 +65,9 @@ func handleBugCheck(itx *tempest.CommandInteraction) {
 					Value: fmt.Sprintf("`0x%08X`", match.Code),
 				},
 			},
+			Footer: &tempest.EmbedFooter{
+				Text: match.URL,
+			},
 		}
 
 		if len(match.Parameters) > 0 {
@@ -81,11 +84,6 @@ func handleBugCheck(itx *tempest.CommandInteraction) {
 				})
 			}
 		}
-
-		embed.Fields = append(embed.Fields, &tempest.EmbedField{
-			Name:  "Documentation",
-			Value: match.URL,
-		})
 
 		response.Embeds = append(response.Embeds, &embed)
 
