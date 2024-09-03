@@ -74,10 +74,12 @@ func handleBugCheck(itx *tempest.CommandInteraction) {
 				parameters = fmt.Sprintf("%s%d. %s\n", parameters, i, strings.ReplaceAll(parameter, "\n", "\n   "))
 			}
 
-			embed.Fields = append(embed.Fields, &tempest.EmbedField{
-				Name:  "Parameters",
-				Value: parameters,
-			})
+			if len(parameters) < 1024 {
+				embed.Fields = append(embed.Fields, &tempest.EmbedField{
+					Name:  "Parameters",
+					Value: parameters,
+				})
+			}
 		}
 
 		embed.Fields = append(embed.Fields, &tempest.EmbedField{
