@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"strconv"
+	"strings"
 
 	tempest "github.com/Amatsagu/Tempest"
 	"github.com/dhrdlicka/errorbot/winerror"
@@ -53,16 +54,37 @@ func handleBugCheck(itx *tempest.CommandInteraction) {
 	matches := winerror.FindBugCheck(uint32(code), bugCheckList)
 
 	if len(matches) > 0 {
+		match := matches[0]
+
 		embed := tempest.Embed{
-			Title:       matches[0].Name,
-			Description: matches[0].String(),
+			Title:       match.Name,
+			Description: match.Description,
 			Fields: []*tempest.EmbedField{
 				{
-					Name:  "Documentation",
-					Value: matches[0].URL,
+					Name:  "Bugcheck code",
+					Value: fmt.Sprintf("`0x%08X`", match.Code),
 				},
 			},
 		}
+
+		if len(match.Parameters) > 0 {
+			parameters := ""
+
+			for i, parameter := range match.Parameters {
+				parameters = fmt.Sprintf("%s%d. %s\n", parameters, i, strings.ReplaceAll(parameter, "\n", "\n   "))
+			}
+
+			embed.Fields = append(embed.Fields, &tempest.EmbedField{
+				Name:  "Parameters",
+				Value: parameters,
+			})
+		}
+
+		embed.Fields = append(embed.Fields, &tempest.EmbedField{
+			Name:  "Documentation",
+			Value: match.URL,
+		})
+
 		response.Embeds = append(response.Embeds, &embed)
 
 	} else {
