@@ -124,6 +124,7 @@ func handleError(itx *tempest.CommandInteraction) {
 		for _, item := range matches {
 			if hResultFromWin32 {
 				item.CodeString = fmt.Sprintf("HRESULT_FROM_WIN32(%s)", item.CodeString)
+				item.Code |= 0x80070000
 			}
 			description = fmt.Appendf(description, "%v\n", item)
 		}
