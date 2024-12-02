@@ -106,7 +106,13 @@ func handleError(itx *tempest.CommandInteraction) {
 		hasAnyMatch = true
 	}
 
-	matches = winerror.FindErrorCode(uint32(code), hResultList)
+	hResultFromWin32 := winerror.HResult(code).Facility() == 7
+
+	if hResultFromWin32 {
+		matches = winerror.FindErrorCode(uint32(winerror.HResult(code).Code()), hResultList)
+	} else {
+		matches = winerror.FindErrorCode(uint32(code), hResultList)
+	}
 
 	if len(matches) > 0 {
 		embed := tempest.Embed{
@@ -116,6 +122,9 @@ func handleError(itx *tempest.CommandInteraction) {
 		var description []byte
 
 		for _, item := range matches {
+			if hResultFromWin32 {
+				item.CodeString = fmt.Sprintf("HRESULT_FROM_WIN32(%s)", item.CodeString)
+			}
 			description = fmt.Appendf(description, "%v\n", item)
 		}
 
