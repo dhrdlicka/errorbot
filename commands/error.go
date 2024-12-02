@@ -109,7 +109,7 @@ func handleError(itx *tempest.CommandInteraction) {
 	hResultFromWin32 := winerror.HResult(code).Facility() == 7
 
 	if hResultFromWin32 {
-		matches = winerror.FindErrorCode(uint32(winerror.HResult(code).Code()), hResultList)
+		matches = winerror.FindErrorCode(uint32(winerror.HResult(code).Code()), win32ErrorList)
 	} else {
 		matches = winerror.FindErrorCode(uint32(code), hResultList)
 	}
