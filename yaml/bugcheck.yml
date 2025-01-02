@@ -1441,13 +1441,13 @@
     - "0"
 - code: 0x00000100
   name: LOADER_BLOCK_MISMATCH
-  url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x100---loader-block-mismatch
+  url: https://www.geoffchappell.com/studies/windows/km/bugchecks/0100.htm
   description: This indicates that either the loader block is invalid, or it does not match the system that is being loaded.
   parameters:
-    - "3"
-    - The size of the loader black extension
-    - The major version of the loader block
-    - The minor version of the loader block
+    - Major version of loader parameter block
+    - Minor version of loader parameter block
+    - Size of loader parameter block
+    - Size of loader parameter extension, else zero
 - code: 0x00000101
   name: CLOCK_WATCHDOG_TIMEOUT
   url: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x101---clock-watchdog-timeout
