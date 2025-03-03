@@ -40,7 +40,7 @@ func handleNTStatus(itx *tempest.CommandInteraction) {
 
 	var response tempest.ResponseMessageData
 
-	if len(matches) == 0 {
+	if len(matches) > 0 {
 		for _, match := range matches {
 			response.Embeds = append(response.Embeds, createEmbed(match))
 		}
