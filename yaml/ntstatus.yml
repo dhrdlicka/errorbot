@@ -27,6 +27,12 @@ facilities:
   0x036: FACILITY_IPSEC
   0x037: FACILITY_MAXIMUM_VALUE
 
+severities:
+  0: Success
+  1: Informational
+  2: Warning
+  3: Error
+
 codes:
   - code: 0x00000000
     name: STATUS_SUCCESS

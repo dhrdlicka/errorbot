@@ -15,6 +15,7 @@ type NTStatusDetails struct {
 
 type NTStatusRepo struct {
 	Facilities map[uint16]string
+	Severities map[uint8]string
 	Codes      []NTStatusDetails
 }
 

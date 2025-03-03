@@ -52,6 +52,12 @@ func handleNTStatus(itx *tempest.CommandInteraction) {
 }
 
 func createEmbed(ntStatus repo.NTStatusDetails) *tempest.Embed {
+	facility := fmt.Sprintf("%d", ntStatus.Code.Facility())
+
+	if facility_name, ok := repo.NTStatus.Facilities[ntStatus.Code.Facility()]; ok {
+		facility = fmt.Sprintf("%s (%s)", facility_name, facility)
+	}
+
 	return &tempest.Embed{
 		Title:       ntStatus.Name,
 		Description: ntStatus.Description,
@@ -61,23 +67,23 @@ func createEmbed(ntStatus repo.NTStatusDetails) *tempest.Embed {
 				Value: fmt.Sprintf("`0x%08X` (%d)", ntStatus.Code, ntStatus.Code),
 			},
 			{
-				Name:   "Sev",
-				Value:  fmt.Sprintf("%d", ntStatus.Code.Sev()),
+				Name:   "Severity",
+				Value:  repo.NTStatus.Severities[ntStatus.Code.Sev()],
 				Inline: true,
 			},
 			{
-				Name:   "C",
+				Name:   "Customer",
 				Value:  fmt.Sprintf("%t", ntStatus.Code.C()),
 				Inline: true,
 			},
 			{
-				Name:   "N",
+				Name:   "Reserved (N)",
 				Value:  fmt.Sprintf("%t", ntStatus.Code.N()),
 				Inline: true,
 			},
 			{
 				Name:   "Facility",
-				Value:  fmt.Sprintf("%d", ntStatus.Code.Facility()),
+				Value:  facility,
 				Inline: true,
 			},
 			{
