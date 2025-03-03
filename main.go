@@ -7,9 +7,12 @@ import (
 
 	tempest "github.com/Amatsagu/Tempest"
 	"github.com/dhrdlicka/errorbot/commands"
+	"github.com/dhrdlicka/errorbot/repo"
 )
 
 func main() {
+	repo.Load()
+
 	client := tempest.NewClient(tempest.ClientOptions{
 		PublicKey: os.Getenv("DISCORD_PUBLIC_KEY"),
 		Rest:      tempest.NewRestClient(os.Getenv("DISCORD_BOT_TOKEN")),
@@ -18,6 +21,7 @@ func main() {
 	//client.RegisterCommand(commands.HelloCommand)
 	client.RegisterCommand(commands.ErrorCommand)
 	client.RegisterCommand(commands.BugCheckCommand)
+	client.RegisterCommand(commands.NTStatusCommand)
 
 	err := client.SyncCommands(nil, nil, false)
 
