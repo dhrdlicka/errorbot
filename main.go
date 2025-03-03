@@ -11,7 +11,11 @@ import (
 )
 
 func main() {
-	repo.Load()
+	err := repo.Load()
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	client := tempest.NewClient(tempest.ClientOptions{
 		PublicKey: os.Getenv("DISCORD_PUBLIC_KEY"),
@@ -23,7 +27,7 @@ func main() {
 	client.RegisterCommand(commands.BugCheckCommand)
 	client.RegisterCommand(commands.NTStatusCommand)
 
-	err := client.SyncCommands(nil, nil, false)
+	err = client.SyncCommands(nil, nil, false)
 
 	if err != nil {
 		log.Fatal(err)

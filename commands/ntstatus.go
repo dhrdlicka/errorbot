@@ -25,7 +25,7 @@ var NTStatusCommand = tempest.Command{
 
 func handleNTStatus(itx *tempest.CommandInteraction) {
 	value := itx.Data.Options[0].Value.(string)
-	codes, err := parseCode(value)
+	codes, err := ParseCode(value)
 
 	if err != nil {
 		slog.Error("failed to parse command option", err)

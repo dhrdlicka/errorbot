@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func parseCode(code string) ([]uint32, error) {
+func ParseCode(code string) ([]uint32, error) {
 	if strings.HasPrefix(code, "0x") || strings.HasPrefix(code, "0X") {
 		// hex prefix, we are almost there
 		longCode, err := strconv.ParseUint(code[2:], 16, 32)
