@@ -37,30 +37,6 @@ codes:
   - code: 0x00000000
     name: STATUS_SUCCESS
     description: The operation completed successfully.
-  - code: 0x00000000
-    name: STATUS_WAIT_0
-    description: The caller specified WaitAny for WaitType and one of the dispatcher objects in the Object array has been set to the signaled state.
-  - code: 0x00000001
-    name: STATUS_WAIT_1
-    description: The caller specified WaitAny for WaitType and one of the dispatcher objects in the Object array has been set to the signaled state.
-  - code: 0x00000002
-    name: STATUS_WAIT_2
-    description: The caller specified WaitAny for WaitType and one of the dispatcher objects in the Object array has been set to the signaled state.
-  - code: 0x00000003
-    name: STATUS_WAIT_3
-    description: The caller specified WaitAny for WaitType and one of the dispatcher objects in the Object array has been set to the signaled state.
-  - code: 0x0000003F
-    name: STATUS_WAIT_63
-    description: The caller specified WaitAny for WaitType and one of the dispatcher objects in the Object array has been set to the signaled state.
-  - code: 0x00000080
-    name: STATUS_ABANDONED
-    description: The caller attempted to wait for a mutex that has been abandoned.
-  - code: 0x00000080
-    name: STATUS_ABANDONED_WAIT_0
-    description: The caller attempted to wait for a mutex that has been abandoned.
-  - code: 0x000000BF
-    name: STATUS_ABANDONED_WAIT_63
-    description: The caller attempted to wait for a mutex that has been abandoned.
   - code: 0x000000C0
     name: STATUS_USER_APC
     description: A user-mode APC was delivered before the given Interval expired.
