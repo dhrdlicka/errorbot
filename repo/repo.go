@@ -1,11 +1,22 @@
 package repo
 
 var NTStatus *NTStatusRepo
+var HResult *HResultRepo
 
 func Load() error {
-	repo, err := LoadNTStatuses("yaml/ntstatus.yml")
+	var err error
 
-	NTStatus = repo
+	NTStatus, err = LoadNTStatuses("yaml/ntstatus.yml")
 
-	return err
+	if err != nil {
+		return err
+	}
+
+	HResult, err = LoadHResults("yaml/hresult.yml")
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
