@@ -49,7 +49,7 @@ func handleHResult(itx *tempest.CommandInteraction) {
 			matches = append(matches, ntStatusMatches...)
 		} else if hr.Facility() == winerror.FACILITY_WIN32 {
 			// this is a mapped Win32 error
-			win32ErrorMatches := repo.Win32Error.FindWin32Error(uint32(hr))
+			win32ErrorMatches := repo.Win32Error.FindWin32Error(uint32(hr.Code()))
 
 			for _, win32Error := range win32ErrorMatches {
 				win32Error.Name = fmt.Sprintf("HRESULT_FROM_WIN32(%s)", win32Error.Name)
