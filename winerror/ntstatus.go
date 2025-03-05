@@ -2,6 +2,13 @@ package winerror
 
 type NTStatus uint32
 
+const (
+	STATUS_SEVERITY_SUCCESS uint8 = iota
+	STATUS_SEVERITY_INFORMATIONAL
+	STATUS_SEVERITY_WARNING
+	STATUS_SEVERITY_ERROR
+)
+
 func (status NTStatus) Sev() uint8 {
 	return uint8((status & 0xC0000000) >> 30)
 }

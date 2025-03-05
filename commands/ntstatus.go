@@ -6,6 +6,7 @@ import (
 
 	tempest "github.com/Amatsagu/Tempest"
 	"github.com/dhrdlicka/errorbot/repo"
+	"github.com/dhrdlicka/errorbot/winerror"
 )
 
 var NTStatusCommand = tempest.Command{
@@ -42,7 +43,7 @@ func handleNTStatus(itx *tempest.CommandInteraction) {
 
 	if len(matches) > 0 {
 		for _, match := range matches {
-			response.Embeds = append(response.Embeds, createEmbed(match))
+			response.Embeds = append(response.Embeds, createNTStatusEmbed(match))
 		}
 	} else {
 		response.Content = fmt.Sprintf("Could not find NTSTATUS code %s (`0x%08X`)", value, codes[0])
@@ -51,7 +52,22 @@ func handleNTStatus(itx *tempest.CommandInteraction) {
 	itx.SendReply(response, false, nil)
 }
 
-func createEmbed(ntStatus repo.NTStatusDetails) *tempest.Embed {
+func ntStatusSeverityToString(severity uint8) string {
+	switch severity {
+	case winerror.STATUS_SEVERITY_SUCCESS:
+		return "Success"
+	case winerror.STATUS_SEVERITY_INFORMATIONAL:
+		return "Informational"
+	case winerror.STATUS_SEVERITY_WARNING:
+		return "Warning"
+	case winerror.STATUS_SEVERITY_ERROR:
+		return "Error"
+	}
+
+	return ""
+}
+
+func createNTStatusEmbed(ntStatus repo.NTStatusDetails) *tempest.Embed {
 	facility := fmt.Sprintf("%d", ntStatus.Code.Facility())
 
 	if facility_name, ok := repo.NTStatus.Facilities[ntStatus.Code.Facility()]; ok {
@@ -68,7 +84,7 @@ func createEmbed(ntStatus repo.NTStatusDetails) *tempest.Embed {
 			},
 			{
 				Name:   "Severity",
-				Value:  repo.NTStatus.Severities[ntStatus.Code.Sev()],
+				Value:  fmt.Sprintf("%s (%d)", ntStatusSeverityToString(ntStatus.Code.Sev()), ntStatus.Code.Sev()),
 				Inline: true,
 			},
 			{
@@ -78,7 +94,7 @@ func createEmbed(ntStatus repo.NTStatusDetails) *tempest.Embed {
 			},
 			{
 				Name:   "Reserved (N)",
-				Value:  fmt.Sprintf("%t", ntStatus.Code.N()),
+				Value:  fmt.Sprintf("%d", boolToInt(ntStatus.Code.N())),
 				Inline: true,
 			},
 			{

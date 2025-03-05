@@ -50,3 +50,11 @@ func ParseCode(code string) ([]uint32, error) {
 
 	return codes, nil
 }
+
+func boolToInt(value bool) int {
+	if value {
+		return 1
+	} else {
+		return 0
+	}
+}
