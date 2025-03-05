@@ -3,19 +3,12 @@ package repo
 import (
 	"os"
 
-	"github.com/dhrdlicka/errorbot/winerror"
 	"gopkg.in/yaml.v3"
 )
 
-type HResultDetails struct {
-	Code        winerror.HResult `yaml:"code"`
-	Name        string           `yaml:"name"`
-	Description string           `yaml:"description"`
-}
-
 type HResultRepo struct {
 	Facilities map[uint16]string
-	Codes      []HResultDetails
+	Codes      []ErrorInfo
 }
 
 func LoadHResults(name string) (*HResultRepo, error) {
@@ -35,11 +28,11 @@ func LoadHResults(name string) (*HResultRepo, error) {
 	return &repo, nil
 }
 
-func (repo HResultRepo) FindHResult(code uint32) []HResultDetails {
-	matches := []HResultDetails{}
+func (repo HResultRepo) FindHResult(code uint32) []ErrorInfo {
+	matches := []ErrorInfo{}
 
 	for _, item := range repo.Codes {
-		if item.Code == winerror.HResult(code) {
+		if item.Code == code {
 			matches = append(matches, item)
 		}
 	}

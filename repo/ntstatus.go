@@ -3,19 +3,12 @@ package repo
 import (
 	"os"
 
-	"github.com/dhrdlicka/errorbot/winerror"
 	"gopkg.in/yaml.v3"
 )
 
-type NTStatusDetails struct {
-	Code        winerror.NTStatus `yaml:"code"`
-	Name        string            `yaml:"name"`
-	Description string            `yaml:"description"`
-}
-
 type NTStatusRepo struct {
 	Facilities map[uint16]string
-	Codes      []NTStatusDetails
+	Codes      []ErrorInfo
 }
 
 func LoadNTStatuses(name string) (*NTStatusRepo, error) {
@@ -35,11 +28,11 @@ func LoadNTStatuses(name string) (*NTStatusRepo, error) {
 	return &repo, nil
 }
 
-func (repo NTStatusRepo) FindNTStatus(code uint32) []NTStatusDetails {
-	matches := []NTStatusDetails{}
+func (repo NTStatusRepo) FindNTStatus(code uint32) []ErrorInfo {
+	matches := []ErrorInfo{}
 
 	for _, item := range repo.Codes {
-		if item.Code == winerror.NTStatus(code) {
+		if item.Code == code {
 			matches = append(matches, item)
 		}
 	}

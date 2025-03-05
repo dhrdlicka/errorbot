@@ -33,7 +33,7 @@ func handleHResult(itx *tempest.CommandInteraction) {
 		return
 	}
 
-	matches := []repo.HResultDetails{}
+	matches := []repo.ErrorInfo{}
 
 	for _, code := range codes {
 		matches = append(matches, repo.HResult.FindHResult(code)...)
@@ -60,7 +60,7 @@ func hResultSeverityToString(severity bool) string {
 	}
 }
 
-func createHResultEmbed(hResult repo.HResultDetails) *tempest.Embed {
+func createHResultEmbed(hResult repo.ErrorInfo) *tempest.Embed {
 	return &tempest.Embed{
 		Title:       hResult.Name,
 		Description: hResult.Description,
@@ -70,7 +70,7 @@ func createHResultEmbed(hResult repo.HResultDetails) *tempest.Embed {
 					Name:  "HRESULT code",
 					Value: fmt.Sprintf("`0x%08X` (%d)", hResult.Code, hResult.Code),
 				},
-			}, createHResultEmbedFields(hResult.Code)...),
+			}, createHResultEmbedFields(winerror.HResult(hResult.Code))...),
 	}
 }
 

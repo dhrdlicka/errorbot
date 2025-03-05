@@ -33,7 +33,7 @@ func handleNTStatus(itx *tempest.CommandInteraction) {
 		return
 	}
 
-	matches := []repo.NTStatusDetails{}
+	matches := []repo.ErrorInfo{}
 
 	for _, code := range codes {
 		matches = append(matches, repo.NTStatus.FindNTStatus(code)...)
@@ -68,7 +68,7 @@ func ntStatusSeverityToString(severity uint8) string {
 	return ""
 }
 
-func createNTStatusEmbed(ntStatus repo.NTStatusDetails) *tempest.Embed {
+func createNTStatusEmbed(ntStatus repo.ErrorInfo) *tempest.Embed {
 	return &tempest.Embed{
 		Title:       ntStatus.Name,
 		Description: ntStatus.Description,
@@ -78,7 +78,7 @@ func createNTStatusEmbed(ntStatus repo.NTStatusDetails) *tempest.Embed {
 					Name:  "NTSTATUS code",
 					Value: fmt.Sprintf("`0x%08X` (%d)", ntStatus.Code, ntStatus.Code),
 				},
-			}, createNTStatusEmbedFields(ntStatus.Code)...),
+			}, createNTStatusEmbedFields(winerror.NTStatus(ntStatus.Code))...),
 	}
 }
 
