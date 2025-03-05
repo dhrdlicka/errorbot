@@ -46,7 +46,8 @@ func handleNTStatus(itx *tempest.CommandInteraction) {
 			response.Embeds = append(response.Embeds, createNTStatusEmbed(match))
 		}
 	} else {
-		response.Content = fmt.Sprintf("Could not find NTSTATUS code %s (`0x%08X`)", value, codes[0])
+		// only break down the hexadecimal code if possible
+		response.Embeds = append(response.Embeds, createUnknownNTStatusEmbed(codes[0]))
 	}
 
 	itx.SendReply(response, false, nil)
@@ -78,6 +79,18 @@ func createNTStatusEmbed(ntStatus repo.NTStatusDetails) *tempest.Embed {
 					Value: fmt.Sprintf("`0x%08X` (%d)", ntStatus.Code, ntStatus.Code),
 				},
 			}, createNTStatusEmbedFields(ntStatus.Code)...),
+	}
+}
+
+func createUnknownNTStatusEmbed(code uint32) *tempest.Embed {
+	return &tempest.Embed{
+		Fields: append(
+			[]*tempest.EmbedField{
+				{
+					Name:  "NTSTATUS code",
+					Value: fmt.Sprintf("`0x%08X` (%d)", code, code),
+				},
+			}, createNTStatusEmbedFields(winerror.NTStatus(code))...),
 	}
 }
 
