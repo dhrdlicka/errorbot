@@ -68,45 +68,51 @@ func ntStatusSeverityToString(severity uint8) string {
 }
 
 func createNTStatusEmbed(ntStatus repo.NTStatusDetails) *tempest.Embed {
-	facility := fmt.Sprintf("%d", ntStatus.Code.Facility())
-
-	if facility_name, ok := repo.NTStatus.Facilities[ntStatus.Code.Facility()]; ok {
-		facility = fmt.Sprintf("%s (%s)", facility_name, facility)
-	}
-
 	return &tempest.Embed{
 		Title:       ntStatus.Name,
 		Description: ntStatus.Description,
-		Fields: []*tempest.EmbedField{
-			{
-				Name:  "NTSTATUS code",
-				Value: fmt.Sprintf("`0x%08X` (%d)", ntStatus.Code, ntStatus.Code),
-			},
-			{
-				Name:   "Severity",
-				Value:  fmt.Sprintf("%s (%d)", ntStatusSeverityToString(ntStatus.Code.Sev()), ntStatus.Code.Sev()),
-				Inline: true,
-			},
-			{
-				Name:   "Customer",
-				Value:  fmt.Sprintf("%t", ntStatus.Code.C()),
-				Inline: true,
-			},
-			{
-				Name:   "Reserved (N)",
-				Value:  fmt.Sprintf("%d", boolToInt(ntStatus.Code.N())),
-				Inline: true,
-			},
-			{
-				Name:   "Facility",
-				Value:  facility,
-				Inline: true,
-			},
-			{
-				Name:   "Code",
-				Value:  fmt.Sprintf("%d", ntStatus.Code.Code()),
-				Inline: true,
-			},
+		Fields: append(
+			[]*tempest.EmbedField{
+				{
+					Name:  "NTSTATUS code",
+					Value: fmt.Sprintf("`0x%08X` (%d)", ntStatus.Code, ntStatus.Code),
+				},
+			}, createNTStatusEmbedFields(ntStatus.Code)...),
+	}
+}
+
+func createNTStatusEmbedFields(status winerror.NTStatus) []*tempest.EmbedField {
+	facility := fmt.Sprintf("%d", status.Facility())
+
+	if facility_name, ok := repo.NTStatus.Facilities[status.Facility()]; ok {
+		facility = fmt.Sprintf("%s (%s)", facility_name, facility)
+	}
+
+	return []*tempest.EmbedField{
+		{
+			Name:   "Severity",
+			Value:  fmt.Sprintf("%s (%d)", ntStatusSeverityToString(status.Sev()), status.Sev()),
+			Inline: true,
+		},
+		{
+			Name:   "Customer",
+			Value:  fmt.Sprintf("%t", status.C()),
+			Inline: true,
+		},
+		{
+			Name:   "Reserved (N)",
+			Value:  fmt.Sprintf("%d", boolToInt(status.N())),
+			Inline: true,
+		},
+		{
+			Name:   "Facility",
+			Value:  facility,
+			Inline: true,
+		},
+		{
+			Name:   "Code",
+			Value:  fmt.Sprintf("%d", status.Code()),
+			Inline: true,
 		},
 	}
 }
