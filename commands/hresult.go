@@ -71,7 +71,8 @@ func handleHResult(itx *tempest.CommandInteraction) {
 			response.Embeds = append(response.Embeds, createHResultEmbed(match))
 		}
 	} else {
-		response.Content = fmt.Sprintf("Could not find HRESULT code %s (`0x%08X`)", value, codes[0])
+		// only break down the hexadecimal code if possible
+		response.Embeds = append(response.Embeds, createUnknownHResultEmbed(codes[0]))
 	}
 
 	itx.SendReply(response, false, nil)
@@ -96,6 +97,18 @@ func createHResultEmbed(hResult repo.ErrorInfo) *tempest.Embed {
 					Value: fmt.Sprintf("`0x%08X` (%d)", hResult.Code, hResult.Code),
 				},
 			}, createHResultEmbedFields(winerror.HResult(hResult.Code))...),
+	}
+}
+
+func createUnknownHResultEmbed(code uint32) *tempest.Embed {
+	return &tempest.Embed{
+		Fields: append(
+			[]*tempest.EmbedField{
+				{
+					Name:  "HRESULT code",
+					Value: fmt.Sprintf("`0x%08X` (%d)", code, code),
+				},
+			}, createHResultEmbedFields(winerror.HResult(code))...),
 	}
 }
 
