@@ -2,6 +2,9 @@ package winerror
 
 type HResult uint32
 
+const FACILITY_WIN32 uint16 = 7
+const FACILITY_NT_BIT uint32 = 0x10000000
+
 func (hr HResult) S() bool {
 	return hr&0x80000000 != 0
 }

@@ -36,7 +36,20 @@ func handleHResult(itx *tempest.CommandInteraction) {
 	matches := []repo.ErrorInfo{}
 
 	for _, code := range codes {
-		matches = append(matches, repo.HResult.FindHResult(code)...)
+		hr := winerror.HResult(code)
+
+		if hr.N() {
+			// this is a mapped NTSTATUS
+			ntStatusMatches := repo.NTStatus.FindNTStatus(uint32(hr) ^ winerror.FACILITY_NT_BIT)
+
+			for _, ntStatus := range ntStatusMatches {
+				ntStatus.Name = fmt.Sprintf("HRESULT_FROM_NT(%s)", ntStatus.Name)
+			}
+
+			matches = append(matches, ntStatusMatches...)
+		} else {
+			matches = append(matches, repo.HResult.FindHResult(code)...)
+		}
 	}
 
 	var response tempest.ResponseMessageData
@@ -75,6 +88,11 @@ func createHResultEmbed(hResult repo.ErrorInfo) *tempest.Embed {
 }
 
 func createHResultEmbedFields(hResult winerror.HResult) []*tempest.EmbedField {
+	if hResult.N() {
+		// mapped NTSTATUS
+		return createNTStatusEmbedFields(winerror.NTStatus(hResult))
+	}
+
 	facility := fmt.Sprintf("%d", hResult.Facility())
 
 	if facility_name, ok := repo.HResult.Facilities[hResult.Facility()]; ok {
