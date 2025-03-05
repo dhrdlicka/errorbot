@@ -26,6 +26,7 @@ func main() {
 	client.RegisterCommand(commands.ErrorCommand)
 	client.RegisterCommand(commands.BugCheckCommand)
 	client.RegisterCommand(commands.NTStatusCommand)
+	client.RegisterCommand(commands.HResultCommand)
 
 	err = client.SyncCommands(nil, nil, false)
 
