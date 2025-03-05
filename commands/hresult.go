@@ -42,8 +42,9 @@ func handleHResult(itx *tempest.CommandInteraction) {
 			// this is a mapped NTSTATUS
 			ntStatusMatches := repo.NTStatus.FindNTStatus(uint32(hr) ^ winerror.FACILITY_NT_BIT)
 
-			for _, ntStatus := range ntStatusMatches {
-				ntStatus.Name = fmt.Sprintf("HRESULT_FROM_NT(%s)", ntStatus.Name)
+			for i, _ := range ntStatusMatches {
+				ntStatusMatches[i].Name = fmt.Sprintf("HRESULT_FROM_NT(%s)", ntStatusMatches[i].Name)
+				ntStatusMatches[i].Code = code
 			}
 
 			matches = append(matches, ntStatusMatches...)
@@ -51,8 +52,9 @@ func handleHResult(itx *tempest.CommandInteraction) {
 			// this is a mapped Win32 error
 			win32ErrorMatches := repo.Win32Error.FindWin32Error(uint32(hr.Code()))
 
-			for _, win32Error := range win32ErrorMatches {
-				win32Error.Name = fmt.Sprintf("HRESULT_FROM_WIN32(%s)", win32Error.Name)
+			for i, _ := range win32ErrorMatches {
+				win32ErrorMatches[i].Name = fmt.Sprintf("HRESULT_FROM_WIN32(%s)", win32ErrorMatches[i].Name)
+				win32ErrorMatches[i].Code = code
 			}
 
 			matches = append(matches, win32ErrorMatches...)
