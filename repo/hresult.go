@@ -36,32 +36,29 @@ func (repo HResultRepo) FindCode(code uint32) []ErrorInfo {
 
 func (repo Repo) FindHResult(code uint32) []ErrorInfo {
 	hr := winerror.HResult(code)
-	var matches []ErrorInfo
 
 	if hr.N() {
 		// this is a mapped NTSTATUS
-		ntStatusMatches := repo.NTStatus.FindCode(code ^ winerror.FACILITY_NT_BIT)
+		ntStatusMatches := repo.FindNTStatus(code ^ winerror.FACILITY_NT_BIT)
 
 		for i := range ntStatusMatches {
 			ntStatusMatches[i].Name = fmt.Sprintf("HRESULT_FROM_NT(%s)", ntStatusMatches[i].Name)
 			ntStatusMatches[i].Code = code
 		}
 
-		matches = append(matches, ntStatusMatches...)
+		return ntStatusMatches
 	} else if hr.Facility() == winerror.FACILITY_WIN32 {
 		// this is a mapped Win32 error
-		win32ErrorMatches := repo.Win32Error.FindCode(uint32(hr.Code()))
+		win32ErrorMatches := repo.FindWin32Error(uint32(hr.Code()))
 
 		for i := range win32ErrorMatches {
 			win32ErrorMatches[i].Name = fmt.Sprintf("HRESULT_FROM_WIN32(%s)", win32ErrorMatches[i].Name)
 			win32ErrorMatches[i].Code = code
 		}
 
-		matches = append(matches, win32ErrorMatches...)
+		return win32ErrorMatches
 
-	} else {
-		matches = append(matches, repo.HResult.FindCode(code)...)
 	}
 
-	return matches
+	return repo.HResult.FindCode(code)
 }
