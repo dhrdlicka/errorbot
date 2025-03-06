@@ -47,7 +47,7 @@ func (repo Repo) FindHResult(code uint32) []ErrorInfo {
 		}
 
 		return ntStatusMatches
-	} else if hr.Facility() == winerror.FACILITY_WIN32 {
+	} else if hr.S() && !hr.R() && hr.Facility() == winerror.FACILITY_WIN32 {
 		// this is a mapped Win32 error
 		win32ErrorMatches := repo.FindWin32Error(uint32(hr.Code()))
 
@@ -57,7 +57,6 @@ func (repo Repo) FindHResult(code uint32) []ErrorInfo {
 		}
 
 		return win32ErrorMatches
-
 	}
 
 	return repo.HResult.FindCode(code)

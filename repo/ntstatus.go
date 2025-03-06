@@ -40,7 +40,7 @@ func (repo Repo) FindNTStatus(code uint32) []ErrorInfo {
 	if s.N() {
 		// this is an NTSTATUS mapped into an HRESULT
 		return []ErrorInfo{}
-	} else if s.Facility() == winerror.FACILITY_NTWIN32 {
+	} else if s.Sev() == winerror.STATUS_SEVERITY_ERROR && s.Facility() == winerror.FACILITY_NTWIN32 {
 		// this is a mapped Win32 error
 		win32ErrorMatches := repo.Win32Error.FindCode(uint32(s.Code()))
 
