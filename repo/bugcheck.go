@@ -1,4 +1,4 @@
-package winerror
+package repo
 
 import (
 	"fmt"
@@ -16,7 +16,9 @@ type BugCheck struct {
 	Parameters  []string `yaml:"parameters"`
 }
 
-func LoadBugChecks(name string) ([]BugCheck, error) {
+type BugCheckRepo []BugCheck
+
+func LoadBugChecks(name string) (BugCheckRepo, error) {
 	file, err := os.ReadFile(name)
 
 	if err != nil {
@@ -33,7 +35,11 @@ func LoadBugChecks(name string) ([]BugCheck, error) {
 	return bugChecks, nil
 }
 
-func FindBugCheck(code uint32, bugChecks []BugCheck) []BugCheck {
+func (repo Repo) FindBugCheck(code uint32) []BugCheck {
+	return repo.BugCheck.FindBugCheck(code)
+}
+
+func (bugChecks BugCheckRepo) FindBugCheck(code uint32) []BugCheck {
 	matches := []BugCheck{}
 
 	for _, item := range bugChecks {

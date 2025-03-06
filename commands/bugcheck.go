@@ -3,11 +3,9 @@ package commands
 import (
 	"fmt"
 	"log/slog"
-	"strconv"
 	"strings"
 
 	tempest "github.com/Amatsagu/Tempest"
-	"github.com/dhrdlicka/errorbot/winerror"
 )
 
 var BugCheckCommand = tempest.Command{
@@ -26,32 +24,17 @@ var BugCheckCommand = tempest.Command{
 }
 
 func handleBugCheck(itx *tempest.CommandInteraction) {
-	bugCheckList, err := winerror.LoadBugChecks("yaml/bugcheck.yml")
-
-	if err != nil {
-		slog.Error("failed to load bugcheck.yml", err)
-		return
-	}
-
 	value := itx.Data.Options[0].Value.(string)
-	longCode, err := strconv.ParseUint(value, 0, 32)
-
-	code := uint32(longCode)
+	codes, err := parseCode(value)
 
 	if err != nil {
-		intCode, err := strconv.ParseInt(value, 0, 32)
-
-		if err != nil {
-			slog.Error("failed to parse command option", err)
-			return
-		}
-
-		code = uint32(intCode)
+		slog.Error("failed to parse command option", err)
+		return
 	}
 
 	var response tempest.ResponseMessageData
 
-	matches := winerror.FindBugCheck(uint32(code), bugCheckList)
+	matches := repoInstance.FindBugCheck(codes[0])
 
 	if len(matches) > 0 {
 		match := matches[0]
@@ -90,7 +73,7 @@ func handleBugCheck(itx *tempest.CommandInteraction) {
 		response.Embeds = append(response.Embeds, &embed)
 
 	} else {
-		response.Content = fmt.Sprintf("Could not find bug check code %s (`0x%08X`)", value, code)
+		response.Content = fmt.Sprintf("Could not find bug check code %s (`0x%08X`)", value, codes[0])
 	}
 
 	itx.SendReply(response, false, nil)

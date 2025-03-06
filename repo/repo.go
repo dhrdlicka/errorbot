@@ -4,6 +4,7 @@ type Repo struct {
 	NTStatus   NTStatusRepo
 	HResult    HResultRepo
 	Win32Error Win32ErrorRepo
+	BugCheck   BugCheckRepo
 }
 
 func Load() (Repo, error) {
@@ -27,9 +28,12 @@ func Load() (Repo, error) {
 		return Repo{}, err
 	}
 
+	bugChecks, err := LoadBugChecks("yaml/bugcheck.yml")
+
 	return Repo{
 		NTStatus:   ntStatuses,
 		HResult:    hResults,
 		Win32Error: win32Errors,
+		BugCheck:   bugChecks,
 	}, nil
 }
