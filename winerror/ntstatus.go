@@ -9,6 +9,8 @@ const (
 	STATUS_SEVERITY_ERROR
 )
 
+const FACILITY_NTWIN32 uint16 = 7
+
 func (status NTStatus) Sev() uint8 {
 	return uint8((status & 0xC0000000) >> 30)
 }

@@ -1,8 +1,10 @@
 package repo
 
 import (
+	"fmt"
 	"os"
 
+	"github.com/dhrdlicka/errorbot/winerror"
 	"gopkg.in/yaml.v3"
 )
 
@@ -33,5 +35,19 @@ func (repo NTStatusRepo) FindCode(code uint32) []ErrorInfo {
 }
 
 func (repo Repo) FindNTStatus(code uint32) []ErrorInfo {
+	s := winerror.NTStatus(code)
+
+	if s.Facility() == winerror.FACILITY_NTWIN32 {
+		// this is a mapped Win32 error
+		win32ErrorMatches := repo.Win32Error.FindCode(uint32(s.Code()))
+
+		for i := range win32ErrorMatches {
+			win32ErrorMatches[i].Name = fmt.Sprintf("NTSTATUS_FROM_WIN32(%s)", win32ErrorMatches[i].Name)
+			win32ErrorMatches[i].Code = code
+		}
+
+		return win32ErrorMatches
+	}
+
 	return repo.NTStatus.FindCode(code)
 }
