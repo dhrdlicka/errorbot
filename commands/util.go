@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -48,7 +49,7 @@ func parseCode(code string) ([]uint32, error) {
 		return nil, lastErr
 	}
 
-	return codes, nil
+	return slices.Compact(codes), nil
 }
 
 func boolToInt(value bool) int {
