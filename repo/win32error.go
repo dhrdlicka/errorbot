@@ -6,9 +6,9 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type Win32ErrorRepo []ErrorInfo
+type Win32ErrorRepo Errors
 
-func LoadWin32Errors(name string) (*Win32ErrorRepo, error) {
+func LoadWin32Errors(name string) (Win32ErrorRepo, error) {
 	file, err := os.ReadFile(name)
 
 	if err != nil {
@@ -22,17 +22,13 @@ func LoadWin32Errors(name string) (*Win32ErrorRepo, error) {
 		return nil, err
 	}
 
-	return &repo, nil
+	return repo, nil
 }
 
-func (repo Win32ErrorRepo) FindWin32Error(code uint32) []ErrorInfo {
-	matches := []ErrorInfo{}
+func (repo Win32ErrorRepo) FindCode(code uint32) []ErrorInfo {
+	return Errors(repo).FindCode(code)
+}
 
-	for _, item := range repo {
-		if item.Code == code {
-			matches = append(matches, item)
-		}
-	}
-
-	return matches
+func (repo Repo) FindWin32Error(code uint32) []ErrorInfo {
+	return repo.Win32Error.FindCode(code)
 }

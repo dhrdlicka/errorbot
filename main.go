@@ -7,11 +7,10 @@ import (
 
 	tempest "github.com/Amatsagu/Tempest"
 	"github.com/dhrdlicka/errorbot/commands"
-	"github.com/dhrdlicka/errorbot/repo"
 )
 
 func main() {
-	err := repo.Load()
+	err := commands.LoadRepo()
 
 	if err != nil {
 		log.Fatal(err)

@@ -1,29 +1,35 @@
 package repo
 
-var NTStatus *NTStatusRepo
-var HResult *HResultRepo
-var Win32Error *Win32ErrorRepo
+type Repo struct {
+	NTStatus   NTStatusRepo
+	HResult    HResultRepo
+	Win32Error Win32ErrorRepo
+}
 
-func Load() error {
+func Load() (Repo, error) {
 	var err error
 
-	NTStatus, err = LoadNTStatuses("yaml/ntstatus.yml")
+	ntStatuses, err := LoadNTStatuses("yaml/ntstatus.yml")
 
 	if err != nil {
-		return err
+		return Repo{}, err
 	}
 
-	HResult, err = LoadHResults("yaml/hresult.yml")
+	hResults, err := LoadHResults("yaml/hresult.yml")
 
 	if err != nil {
-		return err
+		return Repo{}, err
 	}
 
-	Win32Error, err = LoadWin32Errors("yaml/win32error.yml")
+	win32Errors, err := LoadWin32Errors("yaml/win32error.yml")
 
 	if err != nil {
-		return err
+		return Repo{}, err
 	}
 
-	return nil
+	return Repo{
+		NTStatus:   ntStatuses,
+		HResult:    hResults,
+		Win32Error: win32Errors,
+	}, nil
 }

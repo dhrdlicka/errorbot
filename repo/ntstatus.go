@@ -8,34 +8,30 @@ import (
 
 type NTStatusRepo struct {
 	Facilities map[uint16]string
-	Codes      []ErrorInfo
+	Codes      Errors
 }
 
-func LoadNTStatuses(name string) (*NTStatusRepo, error) {
+func LoadNTStatuses(name string) (NTStatusRepo, error) {
 	file, err := os.ReadFile(name)
 
 	if err != nil {
-		return nil, err
+		return NTStatusRepo{}, err
 	}
 
 	var repo NTStatusRepo
 	err = yaml.Unmarshal(file, &repo)
 
 	if err != nil {
-		return nil, err
+		return NTStatusRepo{}, err
 	}
 
-	return &repo, nil
+	return repo, nil
 }
 
-func (repo NTStatusRepo) FindNTStatus(code uint32) []ErrorInfo {
-	matches := []ErrorInfo{}
+func (repo NTStatusRepo) FindCode(code uint32) []ErrorInfo {
+	return repo.Codes.FindCode(code)
+}
 
-	for _, item := range repo.Codes {
-		if item.Code == code {
-			matches = append(matches, item)
-		}
-	}
-
-	return matches
+func (repo Repo) FindNTStatus(code uint32) []ErrorInfo {
+	return repo.NTStatus.FindCode(code)
 }

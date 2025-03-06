@@ -26,7 +26,7 @@ var HResultCommand = tempest.Command{
 
 func handleHResult(itx *tempest.CommandInteraction) {
 	value := itx.Data.Options[0].Value.(string)
-	codes, err := ParseCode(value)
+	codes, err := parseCode(value)
 
 	if err != nil {
 		slog.Error("failed to parse command option", err)
@@ -36,32 +36,7 @@ func handleHResult(itx *tempest.CommandInteraction) {
 	matches := []repo.ErrorInfo{}
 
 	for _, code := range codes {
-		hr := winerror.HResult(code)
-
-		if hr.N() {
-			// this is a mapped NTSTATUS
-			ntStatusMatches := repo.NTStatus.FindNTStatus(uint32(hr) ^ winerror.FACILITY_NT_BIT)
-
-			for i, _ := range ntStatusMatches {
-				ntStatusMatches[i].Name = fmt.Sprintf("HRESULT_FROM_NT(%s)", ntStatusMatches[i].Name)
-				ntStatusMatches[i].Code = code
-			}
-
-			matches = append(matches, ntStatusMatches...)
-		} else if hr.Facility() == winerror.FACILITY_WIN32 {
-			// this is a mapped Win32 error
-			win32ErrorMatches := repo.Win32Error.FindWin32Error(uint32(hr.Code()))
-
-			for i, _ := range win32ErrorMatches {
-				win32ErrorMatches[i].Name = fmt.Sprintf("HRESULT_FROM_WIN32(%s)", win32ErrorMatches[i].Name)
-				win32ErrorMatches[i].Code = code
-			}
-
-			matches = append(matches, win32ErrorMatches...)
-
-		} else {
-			matches = append(matches, repo.HResult.FindHResult(code)...)
-		}
+		matches = append(matches, repoInstance.FindHResult(code)...)
 	}
 
 	var response tempest.ResponseMessageData
@@ -120,7 +95,7 @@ func createHResultEmbedFields(hResult winerror.HResult) []*tempest.EmbedField {
 
 	facility := fmt.Sprintf("%d", hResult.Facility())
 
-	if facility_name, ok := repo.HResult.Facilities[hResult.Facility()]; ok {
+	if facility_name, ok := repoInstance.HResult.Facilities[hResult.Facility()]; ok {
 		facility = fmt.Sprintf("%s (%s)", facility_name, facility)
 	}
 

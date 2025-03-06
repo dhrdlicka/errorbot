@@ -26,7 +26,7 @@ var NTStatusCommand = tempest.Command{
 
 func handleNTStatus(itx *tempest.CommandInteraction) {
 	value := itx.Data.Options[0].Value.(string)
-	codes, err := ParseCode(value)
+	codes, err := parseCode(value)
 
 	if err != nil {
 		slog.Error("failed to parse command option", err)
@@ -36,7 +36,7 @@ func handleNTStatus(itx *tempest.CommandInteraction) {
 	matches := []repo.ErrorInfo{}
 
 	for _, code := range codes {
-		matches = append(matches, repo.NTStatus.FindNTStatus(code)...)
+		matches = append(matches, repoInstance.FindNTStatus(code)...)
 	}
 
 	var response tempest.ResponseMessageData
@@ -97,7 +97,7 @@ func createUnknownNTStatusEmbed(code uint32) *tempest.Embed {
 func createNTStatusEmbedFields(status winerror.NTStatus) []*tempest.EmbedField {
 	facility := fmt.Sprintf("%d", status.Facility())
 
-	if facility_name, ok := repo.NTStatus.Facilities[status.Facility()]; ok {
+	if facility_name, ok := repoInstance.NTStatus.Facilities[status.Facility()]; ok {
 		facility = fmt.Sprintf("%s (%s)", facility_name, facility)
 	}
 
