@@ -10,7 +10,7 @@ import (
 
 type HResultRepo struct {
 	Facilities map[uint16]string
-	Codes      Errors
+	Codes      []ErrorInfo
 }
 
 func LoadHResults(name string) (HResultRepo, error) {
@@ -31,7 +31,7 @@ func LoadHResults(name string) (HResultRepo, error) {
 }
 
 func (repo HResultRepo) FindCode(code uint32) []ErrorInfo {
-	return repo.Codes.FindCode(code)
+	return FindCode(repo.Codes, code)
 }
 
 func (repo Repo) FindHResult(code uint32) []ErrorInfo {

@@ -8,7 +8,7 @@ import (
 
 type NTStatusRepo struct {
 	Facilities map[uint16]string
-	Codes      Errors
+	Codes      []ErrorInfo
 }
 
 func LoadNTStatuses(name string) (NTStatusRepo, error) {
@@ -29,7 +29,7 @@ func LoadNTStatuses(name string) (NTStatusRepo, error) {
 }
 
 func (repo NTStatusRepo) FindCode(code uint32) []ErrorInfo {
-	return repo.Codes.FindCode(code)
+	return FindCode(repo.Codes, code)
 }
 
 func (repo Repo) FindNTStatus(code uint32) []ErrorInfo {

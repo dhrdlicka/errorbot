@@ -8,9 +8,7 @@ type ErrorInfo struct {
 	Description string `yaml:"description"`
 }
 
-type Errors []ErrorInfo
-
-func (errors Errors) FindCode(code uint32) []ErrorInfo {
+func FindCode(errors []ErrorInfo, code uint32) []ErrorInfo {
 	matches := []ErrorInfo{}
 
 	for _, item := range errors {
