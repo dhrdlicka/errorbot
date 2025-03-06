@@ -3,10 +3,9 @@ package commands
 import (
 	"fmt"
 	"log/slog"
-	"strconv"
 
 	tempest "github.com/Amatsagu/Tempest"
-	"github.com/dhrdlicka/errorbot/winerror"
+	"github.com/dhrdlicka/errorbot/repo"
 )
 
 var ErrorCommand = tempest.Command{
@@ -25,120 +24,68 @@ var ErrorCommand = tempest.Command{
 }
 
 func handleError(itx *tempest.CommandInteraction) {
-	ntStatusList, err := winerror.LoadErrorInfo("json/ntstatus.json")
-
-	if err != nil {
-		slog.Error("failed to load ntstatus.json", err)
-		return
-	}
-
-	win32ErrorList, err := winerror.LoadErrorInfo("json/win32error.json")
-
-	if err != nil {
-		slog.Error("failed to load win32error.json", err)
-		return
-	}
-
-	hResultList, err := winerror.LoadErrorInfo("json/hresult.json")
-
-	if err != nil {
-		slog.Error("failed to load hresult.json", err)
-		return
-	}
-
 	value := itx.Data.Options[0].Value.(string)
-	longCode, err := strconv.ParseUint(value, 0, 32)
-
-	code := uint32(longCode)
+	codes, err := parseCode(value)
 
 	if err != nil {
-		intCode, err := strconv.ParseInt(value, 0, 32)
+		slog.Error("failed to parse command option", err)
+		return
+	}
 
-		if err != nil {
-			slog.Error("failed to parse command option", err)
-			return
-		}
+	hResultMatches := []repo.ErrorInfo{}
+	win32ErrorMatches := []repo.ErrorInfo{}
+	ntStatusMatches := []repo.ErrorInfo{}
 
-		code = uint32(intCode)
+	for _, code := range codes {
+		hResultMatches = append(hResultMatches, repoInstance.FindHResult(code)...)
+		win32ErrorMatches = append(win32ErrorMatches, repoInstance.FindWin32Error(code)...)
+		ntStatusMatches = append(ntStatusMatches, repoInstance.FindNTStatus(code)...)
 	}
 
 	var response tempest.ResponseMessageData
 
 	var hasAnyMatch = false
 
-	matches := winerror.FindErrorCode(uint32(code), ntStatusList)
-
-	if len(matches) > 0 {
-		embed := tempest.Embed{
-			Title: "Possible NTSTATUS codes",
-		}
-
-		var description []byte
-
-		for _, item := range matches {
-			description = fmt.Appendf(description, "%v\n", item)
-		}
-
-		embed.Description = string(description)
-
-		response.Embeds = append(response.Embeds, &embed)
+	if len(hResultMatches) > 0 {
+		response.Embeds = append(response.Embeds, &tempest.Embed{
+			Title:       "Possible HRESULT error codes",
+			Description: formatResults(hResultMatches),
+		})
 
 		hasAnyMatch = true
 	}
 
-	matches = winerror.FindErrorCode(uint32(code), win32ErrorList)
-
-	if len(matches) > 0 {
-		embed := tempest.Embed{
-			Title: "Possible Win32 error codes",
-		}
-
-		var description []byte
-
-		for _, item := range matches {
-			description = fmt.Appendf(description, "%v\n", item)
-		}
-
-		embed.Description = string(description)
-
-		response.Embeds = append(response.Embeds, &embed)
+	if len(win32ErrorMatches) > 0 {
+		response.Embeds = append(response.Embeds, &tempest.Embed{
+			Title:       "Possible Win32 error codes",
+			Description: formatResults(win32ErrorMatches),
+		})
 
 		hasAnyMatch = true
 	}
 
-	hResultFromWin32 := winerror.HResult(code).Facility() == 7
-
-	if hResultFromWin32 {
-		matches = winerror.FindErrorCode(uint32(winerror.HResult(code).Code()), win32ErrorList)
-	} else {
-		matches = winerror.FindErrorCode(uint32(code), hResultList)
-	}
-
-	if len(matches) > 0 {
-		embed := tempest.Embed{
-			Title: "Possible HRESULT codes",
-		}
-
-		var description []byte
-
-		for _, item := range matches {
-			if hResultFromWin32 {
-				item.Name = fmt.Sprintf("HRESULT_FROM_WIN32(%s)", item.Name)
-				item.Code |= 0x80070000
-			}
-			description = fmt.Appendf(description, "%v\n", item)
-		}
-
-		embed.Description = string(description)
-
-		response.Embeds = append(response.Embeds, &embed)
+	if len(ntStatusMatches) > 0 {
+		response.Embeds = append(response.Embeds, &tempest.Embed{
+			Title:       "Possible NTSTATUS error codes",
+			Description: formatResults(ntStatusMatches),
+		})
 
 		hasAnyMatch = true
 	}
 
 	if !hasAnyMatch {
-		response.Content = fmt.Sprintf("Could not find error code %s (`0x%08X`)", value, code)
+		response.Content = fmt.Sprintf("Could not find error code %s (`0x%08X`)", value, codes[0])
 	}
 
 	itx.SendReply(response, false, nil)
+}
+
+func formatResults(errors []repo.ErrorInfo) string {
+	var result []byte
+
+	for _, item := range errors {
+		result = fmt.Appendf(result, "%v\n", item)
+	}
+
+	return string(result)
 }
