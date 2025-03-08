@@ -61,7 +61,7 @@ func handleError(itx *tempest.CommandInteraction) {
 			found = true
 
 			response.Embeds = append(response.Embeds, &tempest.Embed{
-				Title:       fmt.Sprintf("Possible %s error codes", errorRepo.string),
+				Title:       fmt.Sprintf("Possible %s codes", errorRepo.string),
 				Description: formatResults(matches),
 			})
 		}
