@@ -8,6 +8,10 @@ import (
 	"github.com/dhrdlicka/errorbot/repo"
 )
 
+type codeFinder interface {
+	FindCode(uint32) []repo.ErrorInfo
+}
+
 var ErrorCommand = tempest.Command{
 	Type:        tempest.CHAT_INPUT_COMMAND_TYPE,
 	Name:        "error",
@@ -32,48 +36,38 @@ func handleError(itx *tempest.CommandInteraction) {
 		return
 	}
 
-	hResultMatches := []repo.ErrorInfo{}
-	win32ErrorMatches := []repo.ErrorInfo{}
-	ntStatusMatches := []repo.ErrorInfo{}
-
-	for _, code := range codes {
-		hResultMatches = append(hResultMatches, repoInstance.FindHResult(code)...)
-		win32ErrorMatches = append(win32ErrorMatches, repoInstance.FindWin32Error(code)...)
-		ntStatusMatches = append(ntStatusMatches, repoInstance.FindNTStatus(code)...)
+	repos := []struct {
+		codeFinder
+		string
+	}{
+		{repoInstance.BugCheck, "bug check"},
+		{repoInstance.HResult, "HRESULT"},
+		{repoInstance.Win32Error, "Win32 error"},
+		{repoInstance.NTStatus, "NTSTATUS"},
 	}
 
 	var response tempest.ResponseMessageData
 
-	var hasAnyMatch = false
+	found := false
 
-	if len(hResultMatches) > 0 {
-		response.Embeds = append(response.Embeds, &tempest.Embed{
-			Title:       "Possible HRESULT error codes",
-			Description: formatResults(hResultMatches),
-		})
+	for _, errorRepo := range repos {
+		matches := []repo.ErrorInfo{}
 
-		hasAnyMatch = true
+		for _, code := range codes {
+			matches = append(matches, errorRepo.FindCode(code)...)
+		}
+
+		if len(matches) > 0 {
+			found = true
+
+			response.Embeds = append(response.Embeds, &tempest.Embed{
+				Title:       fmt.Sprintf("Possible %s error codes", errorRepo.string),
+				Description: formatResults(matches),
+			})
+		}
 	}
 
-	if len(win32ErrorMatches) > 0 {
-		response.Embeds = append(response.Embeds, &tempest.Embed{
-			Title:       "Possible Win32 error codes",
-			Description: formatResults(win32ErrorMatches),
-		})
-
-		hasAnyMatch = true
-	}
-
-	if len(ntStatusMatches) > 0 {
-		response.Embeds = append(response.Embeds, &tempest.Embed{
-			Title:       "Possible NTSTATUS error codes",
-			Description: formatResults(ntStatusMatches),
-		})
-
-		hasAnyMatch = true
-	}
-
-	if !hasAnyMatch {
+	if !found {
 		response.Content = fmt.Sprintf("Could not find error code %s (`0x%08X`)", value, codes[0])
 	}
 

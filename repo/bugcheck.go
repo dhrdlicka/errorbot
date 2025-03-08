@@ -39,6 +39,16 @@ func (repo Repo) FindBugCheck(code uint32) []BugCheck {
 	return repo.BugCheck.FindBugCheck(code)
 }
 
+func (bugChecks BugCheckRepo) FindCode(code uint32) []ErrorInfo {
+	matches := []ErrorInfo{}
+
+	for _, bugCheck := range bugChecks.FindBugCheck(code) {
+		matches = append(matches, bugCheck.ErrorInfo())
+	}
+
+	return matches
+}
+
 func (bugChecks BugCheckRepo) FindBugCheck(code uint32) []BugCheck {
 	matches := []BugCheck{}
 
@@ -73,4 +83,12 @@ func (bugCheck BugCheck) String() string {
 	}
 
 	return description
+}
+
+func (bugCheck BugCheck) ErrorInfo() ErrorInfo {
+	return ErrorInfo{
+		Code:        bugCheck.Code,
+		Name:        bugCheck.Name,
+		Description: bugCheck.Description,
+	}
 }

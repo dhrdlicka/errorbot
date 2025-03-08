@@ -23,3 +23,7 @@ func FindCode(errors []ErrorInfo, code uint32) []ErrorInfo {
 func (errorInfo ErrorInfo) String() string {
 	return fmt.Sprintf("`%s` (`0x%08X`)\n> %s\n", errorInfo.Name, errorInfo.Code, errorInfo.Description)
 }
+
+func (errorInfo ErrorInfo) ErrorInfo() ErrorInfo {
+	return errorInfo
+}
