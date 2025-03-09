@@ -29,7 +29,7 @@ func handleHResult(itx *tempest.CommandInteraction) {
 	codes, err := parseCode(value)
 
 	if err != nil {
-		slog.Error("failed to parse command option", err)
+		slog.Error("failed to parse command option", "error", err)
 		return
 	}
 
