@@ -1,7 +1,5 @@
 package repo
 
-import "fmt"
-
 type ErrorInfo struct {
 	Code        uint32 `yaml:"code"`
 	Name        string `yaml:"name"`
@@ -18,10 +16,6 @@ func FindCode(errors []ErrorInfo, code uint32) []ErrorInfo {
 	}
 
 	return matches
-}
-
-func (errorInfo ErrorInfo) String() string {
-	return fmt.Sprintf("`%s` (`0x%08X`)\n> %s\n", errorInfo.Name, errorInfo.Code, errorInfo.Description)
 }
 
 func (errorInfo ErrorInfo) ErrorInfo() ErrorInfo {

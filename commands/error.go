@@ -78,7 +78,7 @@ func formatResults(errors []repo.ErrorInfo) string {
 	var result []byte
 
 	for _, item := range errors {
-		result = fmt.Appendf(result, "%v\n", item)
+		result = fmt.Appendf(result, "`%s` (`0x%08X`)\n> %s\n\n", item.Name, item.Code, item.Description)
 	}
 
 	return string(result)
