@@ -35,8 +35,8 @@ func LoadBugChecks(name string) (BugCheckRepo, error) {
 	return bugChecks, nil
 }
 
-func (repo Repo) FindBugCheck(code uint32) []BugCheck {
-	return repo.BugCheck.FindBugCheck(code)
+func (repo Repo) FindBugCheck(code uint32) []ErrorInfo {
+	return repo.BugCheck.FindCode(code)
 }
 
 func (bugChecks BugCheckRepo) FindCode(code uint32) []ErrorInfo {

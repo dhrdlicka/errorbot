@@ -9,10 +9,6 @@ import (
 	"github.com/dhrdlicka/errorbot/repo"
 )
 
-type codeFinder interface {
-	FindCode(uint32) []repo.ErrorInfo
-}
-
 var ErrorCommand = tempest.Command{
 	Type:        tempest.CHAT_INPUT_COMMAND_TYPE,
 	Name:        "error",
@@ -38,13 +34,13 @@ func handleError(itx *tempest.CommandInteraction) {
 	}
 
 	repos := []struct {
-		codeFinder
-		string
+		findCode func(uint32) []repo.ErrorInfo
+		name     string
 	}{
-		{repoInstance.BugCheck, "bug check"},
-		{repoInstance.HResult, "HRESULT"},
-		{repoInstance.Win32Error, "Win32 error"},
-		{repoInstance.NTStatus, "NTSTATUS"},
+		{repoInstance.FindBugCheck, "bug check"},
+		{repoInstance.FindHResult, "HRESULT"},
+		{repoInstance.FindWin32Error, "Win32 error"},
+		{repoInstance.FindNTStatus, "NTSTATUS"},
 	}
 
 	var response tempest.ResponseMessageData
@@ -55,14 +51,14 @@ func handleError(itx *tempest.CommandInteraction) {
 		matches := []repo.ErrorInfo{}
 
 		for _, code := range codes {
-			matches = append(matches, errorRepo.FindCode(code)...)
+			matches = append(matches, errorRepo.findCode(code)...)
 		}
 
 		if len(matches) > 0 {
 			found = true
 
 			response.Embeds = append(response.Embeds, &tempest.Embed{
-				Title:       fmt.Sprintf("Possible %s codes", errorRepo.string),
+				Title:       fmt.Sprintf("Possible %s codes", errorRepo.name),
 				Description: formatResults(matches),
 			})
 		}
