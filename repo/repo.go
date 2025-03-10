@@ -30,6 +30,10 @@ func Load() (Repo, error) {
 
 	bugChecks, err := LoadBugChecks("yaml/bugcheck.yml")
 
+	if err != nil {
+		return Repo{}, err
+	}
+
 	return Repo{
 		NTStatus:   ntStatuses,
 		HResult:    hResults,
