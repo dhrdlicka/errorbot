@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 	"log/slog"
+	"strings"
 
 	tempest "github.com/Amatsagu/Tempest"
 	"github.com/dhrdlicka/errorbot/repo"
@@ -78,7 +79,13 @@ func formatResults(errors []repo.ErrorInfo) string {
 	var result []byte
 
 	for _, item := range errors {
-		result = fmt.Appendf(result, "`%s` (`0x%08X`)\n> %s\n\n", item.Name, item.Code, item.Description)
+		result = fmt.Appendf(result, "`%s` (`0x%08X`)\n", item.Name, item.Code)
+
+		for _, line := range strings.Split(item.Description, "\n") {
+			result = fmt.Appendf(result, "> %s\n", strings.TrimSpace(line))
+		}
+
+		fmt.Appendln(result)
 	}
 
 	return string(result)
