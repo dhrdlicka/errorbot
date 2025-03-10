@@ -148,6 +148,12 @@ facilities:
   2748: FACILITY_PIX
 
 codes:
+  - code: 0x00000000
+    name: S_OK
+    description: The operation completed successfully.
+  - code: 0x00000001
+    name: S_FALSE
+    description: S_FALSE
   - code: 0x8000FFFF
     name: E_UNEXPECTED
     description: Catastrophic failure
