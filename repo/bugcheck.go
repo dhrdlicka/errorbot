@@ -61,6 +61,18 @@ func (bugChecks BugCheckRepo) FindBugCheckCode(code uint32) []BugCheck {
 	return matches
 }
 
+func (bugChecks BugCheckRepo) FindBugCheckString(name string) []BugCheck {
+	matches := []BugCheck{}
+
+	for _, item := range bugChecks {
+		if strings.HasPrefix(strings.ToLower(item.Name), strings.ToLower(name)) {
+			matches = append(matches, item)
+		}
+	}
+
+	return matches
+}
+
 func (bugCheck BugCheck) String() string {
 	description := fmt.Sprintf("`0x%08X`\n\n", bugCheck.Code)
 

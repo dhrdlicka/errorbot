@@ -2,10 +2,10 @@ package commands
 
 import (
 	"fmt"
-	"log/slog"
 	"strings"
 
 	tempest "github.com/Amatsagu/Tempest"
+	"github.com/dhrdlicka/errorbot/repo"
 )
 
 var BugCheckCommand = tempest.Command{
@@ -21,20 +21,21 @@ var BugCheckCommand = tempest.Command{
 		},
 	},
 	SlashCommandHandler: handleBugCheck,
+	AutoCompleteHandler: handleBugCheckAutoComplete,
 }
 
 func handleBugCheck(itx *tempest.CommandInteraction) {
 	value := itx.Data.Options[0].Value.(string)
 	codes, err := parseCode(value)
 
-	if err != nil {
-		slog.Error("failed to parse command option", "error", err)
-		return
-	}
-
 	var response tempest.ResponseMessageData
+	var matches []repo.BugCheck
 
-	matches := repoInstance.BugCheck.FindBugCheckCode(codes[0])
+	if err != nil {
+		matches = repoInstance.BugCheck.FindBugCheckString(value)
+	} else {
+		matches = repoInstance.BugCheck.FindBugCheckCode(codes[0])
+	}
 
 	if len(matches) > 0 {
 		match := matches[0]
@@ -77,4 +78,21 @@ func handleBugCheck(itx *tempest.CommandInteraction) {
 	}
 
 	itx.SendReply(response, false, nil)
+}
+
+func handleBugCheckAutoComplete(itx tempest.CommandInteraction) []tempest.Choice {
+	value := itx.Data.Options[0].Value.(string)
+
+	matches := repoInstance.BugCheck.FindBugCheckString(value)
+
+	var choices []tempest.Choice
+
+	for _, match := range matches {
+		choices = append(choices, tempest.Choice{
+			Name:  match.Name,
+			Value: fmt.Sprintf("0x%08X", match.Code),
+		})
+	}
+
+	return choices
 }
