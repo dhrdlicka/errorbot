@@ -86,6 +86,10 @@ func handleBugCheckAutoComplete(itx tempest.CommandInteraction) []tempest.Choice
 
 	matches := repoInstance.BugCheck.FindBugCheckString(value)
 
+	if len(matches) > 25 {
+		return []tempest.Choice{}
+	}
+
 	var choices []tempest.Choice
 
 	for _, match := range matches {
