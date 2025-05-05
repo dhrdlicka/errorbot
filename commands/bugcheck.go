@@ -14,10 +14,11 @@ var BugCheckCommand = tempest.Command{
 	Description: "Look up a Windows NT bug check code",
 	Options: []tempest.CommandOption{
 		{
-			Type:        tempest.STRING_OPTION_TYPE,
-			Name:        "code",
-			Description: "Bug check code",
-			Required:    true,
+			Type:         tempest.STRING_OPTION_TYPE,
+			Name:         "code",
+			Description:  "Bug check code",
+			Required:     true,
+			AutoComplete: true,
 		},
 	},
 	SlashCommandHandler: handleBugCheck,
