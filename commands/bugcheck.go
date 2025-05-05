@@ -34,7 +34,7 @@ func handleBugCheck(itx *tempest.CommandInteraction) {
 
 	var response tempest.ResponseMessageData
 
-	matches := repoInstance.BugCheck.FindBugCheck(codes[0])
+	matches := repoInstance.BugCheck.FindBugCheckCode(codes[0])
 
 	if len(matches) > 0 {
 		match := matches[0]

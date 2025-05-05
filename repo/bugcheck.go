@@ -42,14 +42,14 @@ func (repo Repo) FindBugCheck(code uint32) []ErrorInfo {
 func (bugChecks BugCheckRepo) FindCode(code uint32) []ErrorInfo {
 	matches := []ErrorInfo{}
 
-	for _, bugCheck := range bugChecks.FindBugCheck(code) {
+	for _, bugCheck := range bugChecks.FindBugCheckCode(code) {
 		matches = append(matches, bugCheck.ErrorInfo())
 	}
 
 	return matches
 }
 
-func (bugChecks BugCheckRepo) FindBugCheck(code uint32) []BugCheck {
+func (bugChecks BugCheckRepo) FindBugCheckCode(code uint32) []BugCheck {
 	matches := []BugCheck{}
 
 	for _, item := range bugChecks {
