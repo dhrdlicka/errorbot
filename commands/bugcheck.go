@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	tempest "github.com/Amatsagu/Tempest"
+	tempest "github.com/amatsagu/tempest"
 	"github.com/dhrdlicka/errorbot/repo"
 )
 
@@ -44,7 +44,7 @@ func handleBugCheck(itx *tempest.CommandInteraction) {
 		embed := tempest.Embed{
 			Title:       match.Name,
 			Description: match.Description,
-			Fields: []*tempest.EmbedField{
+			Fields: []tempest.EmbedField{
 				{
 					Name:  "Bugcheck code",
 					Value: fmt.Sprintf("`0x%08X`", match.Code),
@@ -60,19 +60,19 @@ func handleBugCheck(itx *tempest.CommandInteraction) {
 			}
 
 			if len(parameters) < 1024 {
-				embed.Fields = append(embed.Fields, &tempest.EmbedField{
+				embed.Fields = append(embed.Fields, tempest.EmbedField{
 					Name:  "Parameters",
 					Value: parameters,
 				})
 			}
 		}
 
-		embed.Fields = append(embed.Fields, &tempest.EmbedField{
+		embed.Fields = append(embed.Fields, tempest.EmbedField{
 			Name:  "Documentation",
 			Value: match.URL,
 		})
 
-		response.Embeds = append(response.Embeds, &embed)
+		response.Embeds = append(response.Embeds, embed)
 
 	} else {
 		response.Content = fmt.Sprintf("Could not find bug check code %s (`0x%08X`)", value, codes[0])

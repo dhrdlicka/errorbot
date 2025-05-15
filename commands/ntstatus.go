@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	tempest "github.com/Amatsagu/Tempest"
+	tempest "github.com/amatsagu/tempest"
 	"github.com/dhrdlicka/errorbot/repo"
 	"github.com/dhrdlicka/errorbot/winerror"
 )
@@ -68,12 +68,12 @@ func ntStatusSeverityToString(severity uint8) string {
 	return ""
 }
 
-func createNTStatusEmbed(ntStatus repo.ErrorInfo) *tempest.Embed {
-	return &tempest.Embed{
+func createNTStatusEmbed(ntStatus repo.ErrorInfo) tempest.Embed {
+	return tempest.Embed{
 		Title:       ntStatus.Name,
 		Description: ntStatus.Description,
 		Fields: append(
-			[]*tempest.EmbedField{
+			[]tempest.EmbedField{
 				{
 					Name:  "NTSTATUS code",
 					Value: fmt.Sprintf("`0x%08X` (%d)", ntStatus.Code, ntStatus.Code),
@@ -82,10 +82,10 @@ func createNTStatusEmbed(ntStatus repo.ErrorInfo) *tempest.Embed {
 	}
 }
 
-func createUnknownNTStatusEmbed(code uint32) *tempest.Embed {
-	return &tempest.Embed{
+func createUnknownNTStatusEmbed(code uint32) tempest.Embed {
+	return tempest.Embed{
 		Fields: append(
-			[]*tempest.EmbedField{
+			[]tempest.EmbedField{
 				{
 					Name:  "NTSTATUS code",
 					Value: fmt.Sprintf("`0x%08X` (%d)", code, code),
@@ -94,14 +94,14 @@ func createUnknownNTStatusEmbed(code uint32) *tempest.Embed {
 	}
 }
 
-func createNTStatusEmbedFields(status winerror.NTStatus) []*tempest.EmbedField {
+func createNTStatusEmbedFields(status winerror.NTStatus) []tempest.EmbedField {
 	facility := fmt.Sprintf("%d", status.Facility())
 
 	if facility_name, ok := repoInstance.NTStatus.Facilities[status.Facility()]; ok {
 		facility = fmt.Sprintf("%s (%s)", facility_name, facility)
 	}
 
-	return []*tempest.EmbedField{
+	return []tempest.EmbedField{
 		{
 			Name:   "Severity",
 			Value:  fmt.Sprintf("%s (%d)", ntStatusSeverityToString(status.Sev()), status.Sev()),

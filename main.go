@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	tempest "github.com/Amatsagu/Tempest"
+	tempest "github.com/amatsagu/tempest"
 	"github.com/dhrdlicka/errorbot/commands"
 )
 
@@ -18,7 +18,7 @@ func main() {
 
 	client := tempest.NewClient(tempest.ClientOptions{
 		PublicKey: os.Getenv("DISCORD_PUBLIC_KEY"),
-		Rest:      tempest.NewRestClient(os.Getenv("DISCORD_BOT_TOKEN")),
+		Token:     os.Getenv("DISCORD_BOT_TOKEN"),
 	})
 
 	//client.RegisterCommand(commands.HelloCommand)
@@ -27,13 +27,13 @@ func main() {
 	client.RegisterCommand(commands.NTStatusCommand)
 	client.RegisterCommand(commands.HResultCommand)
 
-	err = client.SyncCommands(nil, nil, false)
+	err = client.SyncCommandsWithDiscord(nil, nil, false)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	http.HandleFunc("POST /interactions", client.HandleDiscordRequest)
+	http.HandleFunc("POST /interactions", client.DiscordRequestHandler)
 
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
 }

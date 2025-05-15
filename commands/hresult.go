@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	tempest "github.com/Amatsagu/Tempest"
+	tempest "github.com/amatsagu/tempest"
 	"github.com/dhrdlicka/errorbot/repo"
 	"github.com/dhrdlicka/errorbot/winerror"
 )
@@ -61,12 +61,12 @@ func hResultSeverityToString(severity bool) string {
 	}
 }
 
-func createHResultEmbed(hResult repo.ErrorInfo) *tempest.Embed {
-	return &tempest.Embed{
+func createHResultEmbed(hResult repo.ErrorInfo) tempest.Embed {
+	return tempest.Embed{
 		Title:       hResult.Name,
 		Description: hResult.Description,
 		Fields: append(
-			[]*tempest.EmbedField{
+			[]tempest.EmbedField{
 				{
 					Name:  "HRESULT code",
 					Value: fmt.Sprintf("`0x%08X` (%d)", hResult.Code, hResult.Code),
@@ -75,10 +75,10 @@ func createHResultEmbed(hResult repo.ErrorInfo) *tempest.Embed {
 	}
 }
 
-func createUnknownHResultEmbed(code uint32) *tempest.Embed {
-	return &tempest.Embed{
+func createUnknownHResultEmbed(code uint32) tempest.Embed {
+	return tempest.Embed{
 		Fields: append(
-			[]*tempest.EmbedField{
+			[]tempest.EmbedField{
 				{
 					Name:  "HRESULT code",
 					Value: fmt.Sprintf("`0x%08X` (%d)", code, code),
@@ -87,7 +87,7 @@ func createUnknownHResultEmbed(code uint32) *tempest.Embed {
 	}
 }
 
-func createHResultEmbedFields(hResult winerror.HResult) []*tempest.EmbedField {
+func createHResultEmbedFields(hResult winerror.HResult) []tempest.EmbedField {
 	if hResult.N() {
 		// mapped NTSTATUS
 		return createNTStatusEmbedFields(winerror.NTStatus(hResult))
@@ -99,7 +99,7 @@ func createHResultEmbedFields(hResult winerror.HResult) []*tempest.EmbedField {
 		facility = fmt.Sprintf("%s (%s)", facility_name, facility)
 	}
 
-	return []*tempest.EmbedField{
+	return []tempest.EmbedField{
 		{
 			Name:   "Severity",
 			Value:  fmt.Sprintf("%s (%d)", hResultSeverityToString(hResult.S()), boolToInt(hResult.S())),
