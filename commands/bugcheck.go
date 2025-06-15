@@ -14,15 +14,13 @@ var BugCheckCommand = tempest.Command{
 	Description: "Look up a Windows NT bug check code",
 	Options: []tempest.CommandOption{
 		{
-			Type:         tempest.STRING_OPTION_TYPE,
-			Name:         "code",
-			Description:  "Bug check code",
-			Required:     true,
-			AutoComplete: true,
+			Type:        tempest.STRING_OPTION_TYPE,
+			Name:        "code",
+			Description: "Bug check code",
+			Required:    true,
 		},
 	},
 	SlashCommandHandler: handleBugCheck,
-	AutoCompleteHandler: handleBugCheckAutoComplete,
 }
 
 func handleBugCheck(itx *tempest.CommandInteraction) {
@@ -79,25 +77,4 @@ func handleBugCheck(itx *tempest.CommandInteraction) {
 	}
 
 	itx.SendReply(response, false, nil)
-}
-
-func handleBugCheckAutoComplete(itx tempest.CommandInteraction) []tempest.Choice {
-	value := itx.Data.Options[0].Value.(string)
-
-	matches := repoInstance.BugCheck.FindBugCheckString(value)
-
-	if len(matches) > 25 {
-		return []tempest.Choice{}
-	}
-
-	var choices []tempest.Choice
-
-	for _, match := range matches {
-		choices = append(choices, tempest.Choice{
-			Name:  match.Name,
-			Value: fmt.Sprintf("0x%08X", match.Code),
-		})
-	}
-
-	return choices
 }
