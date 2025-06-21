@@ -1,6 +1,6 @@
 package commands
 
-import tempest "github.com/Amatsagu/Tempest"
+import tempest "github.com/amatsagu/tempest"
 
 var HelloCommand = tempest.Command{
 	Name:                "hello",

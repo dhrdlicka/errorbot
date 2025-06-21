@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"strings"
 
-	tempest "github.com/Amatsagu/Tempest"
+	tempest "github.com/amatsagu/tempest"
 	"github.com/dhrdlicka/errorbot/repo"
 )
 
@@ -57,7 +57,7 @@ func handleError(itx *tempest.CommandInteraction) {
 		if len(matches) > 0 {
 			found = true
 
-			response.Embeds = append(response.Embeds, &tempest.Embed{
+			response.Embeds = append(response.Embeds, tempest.Embed{
 				Title:       fmt.Sprintf("Possible %s codes", errorRepo.name),
 				Description: formatResults(matches),
 			})
