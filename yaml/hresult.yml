@@ -10765,3 +10765,582 @@ codes:
   - code: 0xC9270000
     name: ERROR_ACCELERATOR_SUBMISSION_QUEUE_FULL
     description: The accelerator submission queue is full.
+  - code: 0x00040001
+    name: WBEM_S_ALREADY_EXISTS
+    description: Already exists
+  - code: 0x00040002
+    name: WBEM_S_RESET_TO_DEFAULT
+    description: Reset to default
+  - code: 0x00040003
+    name: WBEM_S_DIFFERENT
+    description: Different
+  - code: 0x00040004
+    name: WBEM_S_TIMEDOUT
+    description: Timed out
+  - code: 0x00040005
+    name: WBEM_S_NO_MORE_DATA
+    description: No more data
+  - code: 0x00040006
+    name: WBEM_S_OPERATION_CANCELLED
+    description: Operation cancelled
+  - code: 0x00040007
+    name: WBEM_S_PENDING
+    description: Operation Pending
+  - code: 0x00040008
+    name: WBEM_S_DUPLICATE_OBJECTS
+    description: Duplicate objects
+  - code: 0x00040009
+    name: WBEM_S_ACCESS_DENIED
+    description: Access Denied
+  - code: 0x00040010
+    name: WBEM_S_PARTIAL_RESULTS
+    description: Partial Results
+  - code: 0x00040017
+    name: WBEM_S_SOURCE_NOT_AVAILABLE
+    description: ""
+  - code: 0x00043001
+    name: WBEM_S_LIMITED_SERVICE
+    description: The provider is capable of limited service.
+  - code: 0x00043002
+    name: WBEM_S_INDIRECTLY_UPDATED
+    description: Reserved for future use.
+  - code: 0x80041001
+    name: WBEM_E_FAILED
+    description: Generic failure
+  - code: 0x80041002
+    name: WBEM_E_NOT_FOUND
+    description: Not found
+  - code: 0x80041003
+    name: WBEM_E_ACCESS_DENIED
+    description: Access denied
+  - code: 0x80041004
+    name: WBEM_E_PROVIDER_FAILURE
+    description: Provider failure
+  - code: 0x80041005
+    name: WBEM_E_TYPE_MISMATCH
+    description: Type mismatch
+  - code: 0x80041006
+    name: WBEM_E_OUT_OF_MEMORY
+    description: Out of memory
+  - code: 0x80041007
+    name: WBEM_E_INVALID_CONTEXT
+    description: Invalid context
+  - code: 0x80041008
+    name: WBEM_E_INVALID_PARAMETER
+    description: Invalid parameter
+  - code: 0x80041009
+    name: WBEM_E_NOT_AVAILABLE
+    description: Not available
+  - code: 0x8004100A
+    name: WBEM_E_CRITICAL_ERROR
+    description: Critical error
+  - code: 0x8004100B
+    name: WBEM_E_INVALID_STREAM
+    description: Invalid stream
+  - code: 0x8004100C
+    name: WBEM_E_NOT_SUPPORTED
+    description: Not supported
+  - code: 0x8004100D
+    name: WBEM_E_INVALID_SUPERCLASS
+    description: Invalid superclass
+  - code: 0x8004100E
+    name: WBEM_E_INVALID_NAMESPACE
+    description: Invalid namespace
+  - code: 0x8004100F
+    name: WBEM_E_INVALID_OBJECT
+    description: Invalid object
+  - code: 0x80041010
+    name: WBEM_E_INVALID_CLASS
+    description: Invalid class
+  - code: 0x80041011
+    name: WBEM_E_PROVIDER_NOT_FOUND
+    description: Provider not found
+  - code: 0x80041012
+    name: WBEM_E_INVALID_PROVIDER_REGISTRATION
+    description: Invalid provider registration
+  - code: 0x80041013
+    name: WBEM_E_PROVIDER_LOAD_FAILURE
+    description: Provider load failure
+  - code: 0x80041014
+    name: WBEM_E_INITIALIZATION_FAILURE
+    description: Initialization failure
+  - code: 0x80041015
+    name: WBEM_E_TRANSPORT_FAILURE
+    description: Transport failure
+  - code: 0x80041016
+    name: WBEM_E_INVALID_OPERATION
+    description: Invalid operation
+  - code: 0x80041017
+    name: WBEM_E_INVALID_QUERY
+    description: Invalid query
+  - code: 0x80041018
+    name: WBEM_E_INVALID_QUERY_TYPE
+    description: Invalid query type
+  - code: 0x80041019
+    name: WBEM_E_ALREADY_EXISTS
+    description: Object or property already exists
+  - code: 0x8004101A
+    name: WBEM_E_OVERRIDE_NOT_ALLOWED
+    description: Override not allowed
+  - code: 0x8004101B
+    name: WBEM_E_PROPAGATED_QUALIFIER
+    description: Propagated qualifier
+  - code: 0x8004101C
+    name: WBEM_E_PROPAGATED_PROPERTY
+    description: Propagated property
+  - code: 0x8004101D
+    name: WBEM_E_UNEXPECTED
+    description: Unexpected error
+  - code: 0x8004101E
+    name: WBEM_E_ILLEGAL_OPERATION
+    description: Illegal operation
+  - code: 0x8004101F
+    name: WBEM_E_CANNOT_BE_KEY
+    description: Property can not be key
+  - code: 0x80041020
+    name: WBEM_E_INCOMPLETE_CLASS
+    description: Incomplete class
+  - code: 0x80041021
+    name: WBEM_E_INVALID_SYNTAX
+    description: Invalid syntax
+  - code: 0x80041022
+    name: WBEM_E_NONDECORATED_OBJECT
+    description: Non-decorated object
+  - code: 0x80041023
+    name: WBEM_E_READ_ONLY
+    description: Attempt to modify read-only object or property failed
+  - code: 0x80041024
+    name: WBEM_E_PROVIDER_NOT_CAPABLE
+    description: Provider is not capable of the attempted operation
+  - code: 0x80041025
+    name: WBEM_E_CLASS_HAS_CHILDREN
+    description: Class has children
+  - code: 0x80041026
+    name: WBEM_E_CLASS_HAS_INSTANCES
+    description: Class has instances
+  - code: 0x80041027
+    name: WBEM_E_QUERY_NOT_IMPLEMENTED
+    description: Query not implemented
+  - code: 0x80041028
+    name: WBEM_E_ILLEGAL_NULL
+    description: Illegal null value
+  - code: 0x80041029
+    name: WBEM_E_INVALID_QUALIFIER_TYPE
+    description: Invalid qualifier type
+  - code: 0x8004102A
+    name: WBEM_E_INVALID_PROPERTY_TYPE
+    description: Invalid property type
+  - code: 0x8004102B
+    name: WBEM_E_VALUE_OUT_OF_RANGE
+    description: Value out of range
+  - code: 0x8004102C
+    name: WBEM_E_CANNOT_BE_SINGLETON
+    description: Cannot be singleton
+  - code: 0x8004102D
+    name: WBEM_E_INVALID_CIM_TYPE
+    description: Invalid CimType
+  - code: 0x8004102E
+    name: WBEM_E_INVALID_METHOD
+    description: Invalid method
+  - code: 0x8004102F
+    name: WBEM_E_INVALID_METHOD_PARAMETERS
+    description: Invalid method Parameter(s)
+  - code: 0x80041030
+    name: WBEM_E_SYSTEM_PROPERTY
+    description: System property
+  - code: 0x80041031
+    name: WBEM_E_INVALID_PROPERTY
+    description: Invalid property
+  - code: 0x80041032
+    name: WBEM_E_CALL_CANCELLED
+    description: Call cancelled
+  - code: 0x80041033
+    name: WBEM_E_SHUTTING_DOWN
+    description: Shutting down
+  - code: 0x80041034
+    name: WBEM_E_PROPAGATED_METHOD
+    description: Propagated method
+  - code: 0x80041035
+    name: WBEM_E_UNSUPPORTED_PARAMETER
+    description: Unsupported parameter
+  - code: 0x80041036
+    name: WBEM_E_MISSING_PARAMETER_ID
+    description: Missing parameter id.
+  - code: 0x80041037
+    name: WBEM_E_INVALID_PARAMETER_ID
+    description: Invalid parameter id.
+  - code: 0x80041038
+    name: WBEM_E_NONCONSECUTIVE_PARAMETER_IDS
+    description: Non-consecutive parameter ids.
+  - code: 0x80041039
+    name: WBEM_E_PARAMETER_ID_ON_RETVAL
+    description: Return Value has a parameter id.
+  - code: 0x8004103A
+    name: WBEM_E_INVALID_OBJECT_PATH
+    description: Invalid object path
+  - code: 0x8004103B
+    name: WBEM_E_OUT_OF_DISK_SPACE
+    description: Out of disk space
+  - code: 0x8004103C
+    name: WBEM_E_BUFFER_TOO_SMALL
+    description: The supplied buffer was too small
+  - code: 0x8004103D
+    name: WBEM_E_UNSUPPORTED_PUT_EXTENSION
+    description: Provider does not support put extensions
+  - code: 0x8004103E
+    name: WBEM_E_UNKNOWN_OBJECT_TYPE
+    description: The marshaling packet identifies an unknown object.
+  - code: 0x8004103F
+    name: WBEM_E_UNKNOWN_PACKET_TYPE
+    description: The marshaling packet type is unknown.
+  - code: 0x80041040
+    name: WBEM_E_MARSHAL_VERSION_MISMATCH
+    description: Marshaling packet version mismatch.
+  - code: 0x80041041
+    name: WBEM_E_MARSHAL_INVALID_SIGNATURE
+    description: Marshaling packet signature is invalid.
+  - code: 0x80041042
+    name: WBEM_E_INVALID_QUALIFIER
+    description: Invalid qualifier.
+  - code: 0x80041043
+    name: WBEM_E_INVALID_DUPLICATE_PARAMETER
+    description: Invalid Duplicate Parameter.
+  - code: 0x80041044
+    name: WBEM_E_TOO_MUCH_DATA
+    description: Server buffers are full and data cannot be accepted
+  - code: 0x80041045
+    name: WBEM_E_SERVER_TOO_BUSY
+    description: Server buffers are full and data cannot be accepted
+  - code: 0x80041046
+    name: WBEM_E_INVALID_FLAVOR
+    description: Invalid flavor
+  - code: 0x80041047
+    name: WBEM_E_CIRCULAR_REFERENCE
+    description: Class derivation caused circular reference.
+  - code: 0x80041048
+    name: WBEM_E_UNSUPPORTED_CLASS_UPDATE
+    description: Unsupported class update.
+  - code: 0x80041049
+    name: WBEM_E_CANNOT_CHANGE_KEY_INHERITANCE
+    description: Cannot change class key inheritance.
+  - code: 0x80041050
+    name: WBEM_E_CANNOT_CHANGE_INDEX_INHERITANCE
+    description: Cannot change class index inheritance.
+  - code: 0x80041051
+    name: WBEM_E_TOO_MANY_PROPERTIES
+    description: Class object already contains the maximum number of properties.
+  - code: 0x80041052
+    name: WBEM_E_UPDATE_TYPE_MISMATCH
+    description: A property was redefined with a conflicting type in a derived class.
+  - code: 0x80041053
+    name: WBEM_E_UPDATE_OVERRIDE_NOT_ALLOWED
+    description: A non-overrideable qualifier was overridden in a derived class.
+  - code: 0x80041054
+    name: WBEM_E_UPDATE_PROPAGATED_METHOD
+    description: A method was redeclared with a conflicting signature in a derived class.
+  - code: 0x80041055
+    name: WBEM_E_METHOD_NOT_IMPLEMENTED
+    description: This method is not implemented in any class
+  - code: 0x80041056
+    name: WBEM_E_METHOD_DISABLED
+    description: This method is disabled for this class
+  - code: 0x80041057
+    name: WBEM_E_REFRESHER_BUSY
+    description: The refresher is busy
+  - code: 0x80041058
+    name: WBEM_E_UNPARSABLE_QUERY
+    description: Unparsable query.
+  - code: 0x80041059
+    name: WBEM_E_NOT_EVENT_CLASS
+    description: Class is not an event class.
+  - code: 0x8004105A
+    name: WBEM_E_MISSING_GROUP_WITHIN
+    description: "'BY' cannot be used without 'GROUP WITHIN'."
+  - code: 0x8004105B
+    name: WBEM_E_MISSING_AGGREGATION_LIST
+    description: Aggregation on all properties is not supported.
+  - code: 0x8004105C
+    name: WBEM_E_PROPERTY_NOT_AN_OBJECT
+    description: "'Dot' notation cannot be used on a property that is not an embedded object."
+  - code: 0x8004105D
+    name: WBEM_E_AGGREGATING_BY_OBJECT
+    description: Aggregation on a property that is an embedded object is not supported.
+  - code: 0x8004105F
+    name: WBEM_E_UNINTERPRETABLE_PROVIDER_QUERY
+    description: Intrinsic event provider registration uses illegal query.
+  - code: 0x80041060
+    name: WBEM_E_BACKUP_RESTORE_WINMGMT_RUNNING
+    description: A backup or restore was requested while WinMgmt is already running.
+  - code: 0x80041061
+    name: WBEM_E_QUEUE_OVERFLOW
+    description: Event queue overflowed.
+  - code: 0x80041062
+    name: WBEM_E_PRIVILEGE_NOT_HELD
+    description: Privilege not held.
+  - code: 0x80041063
+    name: WBEM_E_INVALID_OPERATOR
+    description: This operator is not valid for this property type.
+  - code: 0x80041064
+    name: WBEM_E_LOCAL_CREDENTIALS
+    description: User credentials cannot be used for local connections
+  - code: 0x80041065
+    name: WBEM_E_CANNOT_BE_ABSTRACT
+    description: A class cannot be abstract if its superclass is not also abstract
+  - code: 0x80041066
+    name: WBEM_E_AMENDED_OBJECT
+    description: An amended object cannot be put unless WBEM_FLAG_USE_AMENDED_QUALIFIERS is specified
+  - code: 0x80041067
+    name: WBEM_E_CLIENT_TOO_SLOW
+    description: The client was not retrieving objects quickly enough from an enumeration
+  - code: 0x80041068
+    name: WBEM_E_NULL_SECURITY_DESCRIPTOR
+    description: Null security descriptor used
+  - code: 0x80041069
+    name: WBEM_E_TIMED_OUT
+    description: Operation times out
+  - code: 0x8004106A
+    name: WBEM_E_INVALID_ASSOCIATION
+    description: Invalid association
+  - code: 0x8004106B
+    name: WBEM_E_AMBIGUOUS_OPERATION
+    description: Ambiguous operation
+  - code: 0x8004106C
+    name: WBEM_E_QUOTA_VIOLATION
+    description: Quota violation
+  - code: 0x8004106D
+    name: WBEM_E_RESERVED_001
+    description: Transaction conflict
+  - code: 0x8004106E
+    name: WBEM_E_RESERVED_002
+    description: Transaction forced rollback
+  - code: 0x8004106F
+    name: WBEM_E_UNSUPPORTED_LOCALE
+    description: Unsupported locale
+  - code: 0x80041070
+    name: WBEM_E_HANDLE_OUT_OF_DATE
+    description: Handle out of date
+  - code: 0x80041071
+    name: WBEM_E_CONNECTION_FAILED
+    description: Connection failed
+  - code: 0x80041072
+    name: WBEM_E_INVALID_HANDLE_REQUEST
+    description: Invalid handle request
+  - code: 0x80041073
+    name: WBEM_E_PROPERTY_NAME_TOO_WIDE
+    description: Property name too wide
+  - code: 0x80041074
+    name: WBEM_E_CLASS_NAME_TOO_WIDE
+    description: Class name too wide
+  - code: 0x80041075
+    name: WBEM_E_METHOD_NAME_TOO_WIDE
+    description: Method name too wide
+  - code: 0x80041076
+    name: WBEM_E_QUALIFIER_NAME_TOO_WIDE
+    description: Qualifier name too wide
+  - code: 0x80041077
+    name: WBEM_E_RERUN_COMMAND
+    description: Rerun command
+  - code: 0x80041078
+    name: WBEM_E_DATABASE_VER_MISMATCH
+    description: Database version mismatch
+  - code: 0x80041079
+    name: WBEM_E_VETO_DELETE
+    description: Veto delete
+  - code: 0x8004107A
+    name: WBEM_E_VETO_PUT
+    description: Veto put
+  - code: 0x80041080
+    name: WBEM_E_INVALID_LOCALE
+    description: The specified locale id was not valid for the operation.
+  - code: 0x80041081
+    name: WBEM_E_PROVIDER_SUSPENDED
+    description: Provider suspended
+  - code: 0x80041082
+    name: WBEM_E_SYNCHRONIZATION_REQUIRED
+    description: The object must be committed and retrieved again before the requested operation can succeed
+  - code: 0x80041083
+    name: WBEM_E_NO_SCHEMA
+    description: Schema required to complete the operation is not available
+  - code: 0x80041084
+    name: WBEM_E_PROVIDER_ALREADY_REGISTERED
+    description: Provider already registered
+  - code: 0x80041085
+    name: WBEM_E_PROVIDER_NOT_REGISTERED
+    description: Provider not registered
+  - code: 0x80041086
+    name: WBEM_E_FATAL_TRANSPORT_ERROR
+    description: Fatal transport error, other transport will not be tried
+  - code: 0x80041087
+    name: WBEM_E_ENCRYPTED_CONNECTION_REQUIRED
+    description: Client connection to WINMGMT needs to be encrypted for this operation. Please adjust your IWbemServices proxy security settings and retry.
+  - code: 0x80041088
+    name: WBEM_E_PROVIDER_TIMED_OUT
+    description: A provider failed to report results within the specified timeout.
+  - code: 0x80041089
+    name: WBEM_E_NO_KEY
+    description: Attempt to put an instance with no defined key.
+  - code: 0x8004108A
+    name: WBEM_E_PROVIDER_DISABLED
+    description: ""
+  - code: 0x80042001
+    name: WBEMESS_E_REGISTRATION_TOO_BROAD
+    description: Provider registration overlaps with system event domain
+  - code: 0x80042002
+    name: WBEMESS_E_REGISTRATION_TOO_PRECISE
+    description: "'WITHIN' clause must be used in this query due to lack of event providers"
+  - code: 0x80042003
+    name: WBEMESS_E_AUTHZ_NOT_PRIVILEGED
+    description: This computer does not have the necessary domain permissions to support the security functions relating to the created subscription instance.  Contact the Domain Administrator to get this computer added to the Windows Authorization Access Group.
+  - code: 0x80043001
+    name: WBEM_E_RETRY_LATER
+    description: Retry Later
+  - code: 0x80043002
+    name: WBEM_E_RESOURCE_CONTENTION
+    description: Resource Contention
+  - code: 0x80044001
+    name: WBEMMOF_E_EXPECTED_QUALIFIER_NAME
+    description: Expected qualifier name, an identifier
+  - code: 0x80044002
+    name: WBEMMOF_E_EXPECTED_SEMI
+    description: Expected semicolon or '='
+  - code: 0x80044003
+    name: WBEMMOF_E_EXPECTED_OPEN_BRACE
+    description: Expected open brace
+  - code: 0x80044004
+    name: WBEMMOF_E_EXPECTED_CLOSE_BRACE
+    description: Missing closing brace, or illegal array element
+  - code: 0x80044005
+    name: WBEMMOF_E_EXPECTED_CLOSE_BRACKET
+    description: Expected closing bracket
+  - code: 0x80044006
+    name: WBEMMOF_E_EXPECTED_CLOSE_PAREN
+    description: Expected closing parenthesis
+  - code: 0x80044007
+    name: WBEMMOF_E_ILLEGAL_CONSTANT_VALUE
+    description: Illegal constant value. (Numeric value out of range or strings without quotes)
+  - code: 0x80044008
+    name: WBEMMOF_E_EXPECTED_TYPE_IDENTIFIER
+    description: Expected type identifier
+  - code: 0x80044009
+    name: WBEMMOF_E_EXPECTED_OPEN_PAREN
+    description: Expected open parenthesis
+  - code: 0x8004400A
+    name: WBEMMOF_E_UNRECOGNIZED_TOKEN
+    description: Unexpected token at file scope
+  - code: 0x8004400B
+    name: WBEMMOF_E_UNRECOGNIZED_TYPE
+    description: Unrecognized or unsupported type identifier
+  - code: 0x8004400C
+    name: WBEMMOF_E_EXPECTED_PROPERTY_NAME
+    description: Expected property or method name
+  - code: 0x8004400D
+    name: WBEMMOF_E_TYPEDEF_NOT_SUPPORTED
+    description: Typedefs and enumerated types are not currently supported
+  - code: 0x8004400E
+    name: WBEMMOF_E_UNEXPECTED_ALIAS
+    description: Unexpected alias. Only references to class object can take alias values
+  - code: 0x8004400F
+    name: WBEMMOF_E_UNEXPECTED_ARRAY_INIT
+    description: Unexpected array initialization. Arrays must be declared with []
+  - code: 0x80044010
+    name: WBEMMOF_E_INVALID_AMENDMENT_SYNTAX
+    description: Invalid namespace path syntax
+  - code: 0x80044011
+    name: WBEMMOF_E_INVALID_DUPLICATE_AMENDMENT
+    description: Duplicate amendment specifiers
+  - code: 0x80044012
+    name: WBEMMOF_E_INVALID_PRAGMA
+    description: "#pragma must be followed by a valid keyword"
+  - code: 0x80044013
+    name: WBEMMOF_E_INVALID_NAMESPACE_SYNTAX
+    description: Invalid namespace path syntax
+  - code: 0x80044014
+    name: WBEMMOF_E_EXPECTED_CLASS_NAME
+    description: Unexpected character in class name (must be an identifier)
+  - code: 0x80044015
+    name: WBEMMOF_E_TYPE_MISMATCH
+    description: Type mismatch. The value specified could not be coerced into the appropriate type
+  - code: 0x80044016
+    name: WBEMMOF_E_EXPECTED_ALIAS_NAME
+    description: Dollar sign must be followed by an alias name (an identifier)
+  - code: 0x80044017
+    name: WBEMMOF_E_INVALID_CLASS_DECLARATION
+    description: Invalid class declaration
+  - code: 0x80044018
+    name: WBEMMOF_E_INVALID_INSTANCE_DECLARATION
+    description: Invalid instance declaration. Must start with 'instance of'
+  - code: 0x80044019
+    name: WBEMMOF_E_EXPECTED_DOLLAR
+    description: Expected dollar sign. 'as' keyword must be followed by an alias, of the form '$name'
+  - code: 0x8004401A
+    name: WBEMMOF_E_CIMTYPE_QUALIFIER
+    description: "'CIMTYPE' qualifier may not be specified directly in a MOF file. Use standard type notation"
+  - code: 0x8004401B
+    name: WBEMMOF_E_DUPLICATE_PROPERTY
+    description: Duplicate property declaration unexpected
+  - code: 0x8004401C
+    name: WBEMMOF_E_INVALID_NAMESPACE_SPECIFICATION
+    description: Invalid namespace syntax. References to other servers are not allowed!
+  - code: 0x8004401D
+    name: WBEMMOF_E_OUT_OF_RANGE
+    description: Value out of range
+  - code: 0x8004401E
+    name: WBEMMOF_E_INVALID_FILE
+    description: This is not a valid MOF file
+  - code: 0x8004401F
+    name: WBEMMOF_E_ALIASES_IN_EMBEDDED
+    description: Embedded objects may not be aliases
+  - code: 0x80044020
+    name: WBEMMOF_E_NULL_ARRAY_ELEM
+    description: NULL elements in array are not supported
+  - code: 0x80044021
+    name: WBEMMOF_E_DUPLICATE_QUALIFIER
+    description: Duplicate qualifier declaration unexpected
+  - code: 0x80044022
+    name: WBEMMOF_E_EXPECTED_FLAVOR_TYPE
+    description: Expected a flavor type such as ToInstance, ToSubClass, EnableOverride, or DisableOverride
+  - code: 0x80044023
+    name: WBEMMOF_E_INCOMPATIBLE_FLAVOR_TYPES
+    description: Combining Overridable, and NotOverridable is not legal
+  - code: 0x80044024
+    name: WBEMMOF_E_MULTIPLE_ALIASES
+    description: Alias cannot be used twice
+  - code: 0x80044025
+    name: WBEMMOF_E_INCOMPATIBLE_FLAVOR_TYPES2
+    description: Combining \"Restricted\", and \"ToInstance\" or \"ToSubClass\" is not legal
+  - code: 0x80044026
+    name: WBEMMOF_E_NO_ARRAYS_RETURNED
+    description: Methods cannot return array values
+  - code: 0x80044027
+    name: WBEMMOF_E_MUST_BE_IN_OR_OUT
+    description: Arguments must have an \"In\" and/or \"Out\" qualifier
+  - code: 0x80044028
+    name: WBEMMOF_E_INVALID_FLAGS_SYNTAX
+    description: Invalid flags syntax
+  - code: 0x80044029
+    name: WBEMMOF_E_EXPECTED_BRACE_OR_BAD_TYPE
+    description: Expected brace or bad type
+  - code: 0x8004402A
+    name: WBEMMOF_E_UNSUPPORTED_CIMV22_QUAL_VALUE
+    description: CIM V2.2 feature not currently supported for qualifier value
+  - code: 0x8004402B
+    name: WBEMMOF_E_UNSUPPORTED_CIMV22_DATA_TYPE
+    description: CIM V2.2 feature not currently supported; data type
+  - code: 0x8004402C
+    name: WBEMMOF_E_INVALID_DELETEINSTANCE_SYNTAX
+    description: "Invalid delete instance syntax, should be #pragma deleteinstance(\"instance path\", FAIL|NOFAIL)"
+  - code: 0x8004402D
+    name: WBEMMOF_E_INVALID_QUALIFIER_SYNTAX
+    description: Invalid qualifier syntax.  Should be of the for Qualifier name:type=value,scope(class|instance), flavor(toinstance|etc);
+  - code: 0x8004402E
+    name: WBEMMOF_E_QUALIFIER_USED_OUTSIDE_SCOPE
+    description: Qualifier is used outside of its scope
+  - code: 0x8004402F
+    name: WBEMMOF_E_ERROR_CREATING_TEMP_FILE
+    description: Error creating temporary file
+  - code: 0x80044030
+    name: WBEMMOF_E_ERROR_INVALID_INCLUDE_FILE
+    description: Invalid include file
+  - code: 0x80044031
+    name: WBEMMOF_E_INVALID_DELETECLASS_SYNTAX
+    description: Invalid DeleteClass syntax
