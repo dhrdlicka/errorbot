@@ -1,12 +1,17 @@
 package util
 
 import (
+	"errors"
 	"slices"
 	"strconv"
 	"strings"
 )
 
 func ParseCode(code string) ([]uint32, error) {
+	if len(code) == 0 {
+		return nil, errors.New("empty string")
+	}
+
 	if strings.HasPrefix(code, "0x") || strings.HasPrefix(code, "0X") {
 		// hex prefix, we are almost there
 		longCode, err := strconv.ParseUint(code[2:], 16, 32)
