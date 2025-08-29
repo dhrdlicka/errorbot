@@ -6,6 +6,7 @@ import (
 
 	tempest "github.com/amatsagu/tempest"
 	"github.com/dhrdlicka/errorbot/repo"
+	"github.com/dhrdlicka/errorbot/util"
 )
 
 var BugCheckCommand = tempest.Command{
@@ -25,7 +26,7 @@ var BugCheckCommand = tempest.Command{
 
 func handleBugCheck(itx *tempest.CommandInteraction) {
 	value := itx.Data.Options[0].Value.(string)
-	codes, err := parseCode(value)
+	codes, err := util.ParseCode(value)
 
 	var response tempest.ResponseMessageData
 	var matches []repo.BugCheck

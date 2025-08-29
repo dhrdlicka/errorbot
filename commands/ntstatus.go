@@ -6,6 +6,7 @@ import (
 
 	tempest "github.com/amatsagu/tempest"
 	"github.com/dhrdlicka/errorbot/repo"
+	"github.com/dhrdlicka/errorbot/util"
 	"github.com/dhrdlicka/errorbot/winerror"
 )
 
@@ -26,7 +27,7 @@ var NTStatusCommand = tempest.Command{
 
 func handleNTStatus(itx *tempest.CommandInteraction) {
 	value := itx.Data.Options[0].Value.(string)
-	codes, err := parseCode(value)
+	codes, err := util.ParseCode(value)
 
 	if err != nil {
 		slog.Error("failed to parse command option", "error", err)
@@ -114,7 +115,7 @@ func createNTStatusEmbedFields(status winerror.NTStatus) []tempest.EmbedField {
 		},
 		{
 			Name:   "Reserved (N)",
-			Value:  fmt.Sprintf("%d", boolToInt(status.N())),
+			Value:  fmt.Sprintf("%d", util.BoolToInt(status.N())),
 			Inline: true,
 		},
 		{

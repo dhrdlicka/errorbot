@@ -7,6 +7,7 @@ import (
 
 	tempest "github.com/amatsagu/tempest"
 	"github.com/dhrdlicka/errorbot/repo"
+	"github.com/dhrdlicka/errorbot/util"
 )
 
 var ErrorCommand = tempest.Command{
@@ -26,7 +27,7 @@ var ErrorCommand = tempest.Command{
 
 func handleError(itx *tempest.CommandInteraction) {
 	value := itx.Data.Options[0].Value.(string)
-	codes, err := parseCode(value)
+	codes, err := util.ParseCode(value)
 
 	if err != nil {
 		slog.Error("failed to parse command option", "error", err)
@@ -80,8 +81,6 @@ func formatResults(errors []repo.ErrorInfo) string {
 		for _, line := range strings.Split(item.Description, "\n") {
 			result = fmt.Appendf(result, "> %s\n", strings.TrimSpace(line))
 		}
-
-		fmt.Appendln(result)
 	}
 
 	return string(result)

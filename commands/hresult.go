@@ -6,6 +6,7 @@ import (
 
 	tempest "github.com/amatsagu/tempest"
 	"github.com/dhrdlicka/errorbot/repo"
+	"github.com/dhrdlicka/errorbot/util"
 	"github.com/dhrdlicka/errorbot/winerror"
 )
 
@@ -26,7 +27,7 @@ var HResultCommand = tempest.Command{
 
 func handleHResult(itx *tempest.CommandInteraction) {
 	value := itx.Data.Options[0].Value.(string)
-	codes, err := parseCode(value)
+	codes, err := util.ParseCode(value)
 
 	if err != nil {
 		slog.Error("failed to parse command option", "error", err)
@@ -102,12 +103,12 @@ func createHResultEmbedFields(hResult winerror.HResult) []tempest.EmbedField {
 	return []tempest.EmbedField{
 		{
 			Name:   "Severity",
-			Value:  fmt.Sprintf("%s (%d)", hResultSeverityToString(hResult.S()), boolToInt(hResult.S())),
+			Value:  fmt.Sprintf("%s (%d)", hResultSeverityToString(hResult.S()), util.BoolToInt(hResult.S())),
 			Inline: true,
 		},
 		{
 			Name:   "Reserved (R)",
-			Value:  fmt.Sprintf("%d", boolToInt(hResult.R())),
+			Value:  fmt.Sprintf("%d", util.BoolToInt(hResult.R())),
 			Inline: true,
 		},
 		{
@@ -117,12 +118,12 @@ func createHResultEmbedFields(hResult winerror.HResult) []tempest.EmbedField {
 		},
 		{
 			Name:   "Reserved (N)",
-			Value:  fmt.Sprintf("%d", boolToInt(hResult.N())),
+			Value:  fmt.Sprintf("%d", util.BoolToInt(hResult.N())),
 			Inline: true,
 		},
 		{
 			Name:   "Reserved (X)",
-			Value:  fmt.Sprintf("%d", boolToInt(hResult.X())),
+			Value:  fmt.Sprintf("%d", util.BoolToInt(hResult.X())),
 			Inline: true,
 		},
 		{
