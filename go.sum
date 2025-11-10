@@ -1,5 +1,5 @@
-github.com/amatsagu/tempest v1.3.4 h1:DHDkF8lvPlNwCqJyS7jsLsgVp4gtcFWkyy78Nwu+Z2Y=
-github.com/amatsagu/tempest v1.3.4/go.mod h1:01qHm96xmjNLOd8ErseQuFKvdwdYrXcHpkTY4t3a2NA=
+github.com/amatsagu/tempest v1.3.5 h1:4n/MQjmG106msPaWEvi7Aw1CI7R8OmkareLskQ5P8qw=
+github.com/amatsagu/tempest v1.3.5/go.mod h1:IG4i6tLyB2jw/glF5p6pr1ORQE4y/fF2a5tXUQrRHec=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
