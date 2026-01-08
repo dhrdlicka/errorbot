@@ -16,9 +16,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	client := tempest.NewClient(tempest.ClientOptions{
+	client := tempest.NewHTTPClient(tempest.HTTPClientOptions{
 		PublicKey: os.Getenv("DISCORD_PUBLIC_KEY"),
-		Token:     os.Getenv("DISCORD_BOT_TOKEN"),
+		BaseClientOptions: tempest.BaseClientOptions{
+			Token: os.Getenv("DISCORD_BOT_TOKEN"),
+		},
 	})
 
 	//client.RegisterCommand(commands.HelloCommand)
