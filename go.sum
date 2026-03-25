@@ -1,5 +1,5 @@
-github.com/amatsagu/tempest v1.5.0 h1:rkRFgy2uuuYvkJfbxLJkI1Hkz+aVMiwVJ0pdk9ZnTFg=
-github.com/amatsagu/tempest v1.5.0/go.mod h1:Tc/40P/5gUlMr/DFMaVl0x4ZHxFvkYGONn5EGmJ8fk0=
+github.com/amatsagu/tempest v1.6.0 h1:GP9/R6x5a9xvPwp/+TtznCrHSvrmF4kZ5hW9iXZuSCM=
+github.com/amatsagu/tempest v1.6.0/go.mod h1:8oz7uU0USMjcvSZjTUbH1JKpqVJFJ+JrT9oXbFDn/6U=
 github.com/gorilla/websocket v1.5.3 h1:saDtZ6Pbx/0u+bgYQ3q96pZgCzfhKXGPqt7kZ72aNNg=
 github.com/gorilla/websocket v1.5.3/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
