@@ -1,8 +1,8 @@
 module github.com/dhrdlicka/errorbot
 
-go 1.26.2
+go 1.26.4
 
-require github.com/amatsagu/tempest v1.7.2
+require github.com/amatsagu/tempest v1.10.0
 
 require gopkg.in/yaml.v3 v3.0.1
 
