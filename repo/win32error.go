@@ -1,15 +1,16 @@
 package repo
 
 import (
-	"os"
+	"io/fs"
 
+	yamldata "github.com/dhrdlicka/errorbot/yaml"
 	"gopkg.in/yaml.v3"
 )
 
 type Win32ErrorRepo []ErrorInfo
 
 func LoadWin32Errors(name string) (Win32ErrorRepo, error) {
-	file, err := os.ReadFile(name)
+	file, err := fs.ReadFile(yamldata.FS, name)
 
 	if err != nil {
 		return nil, err

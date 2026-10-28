@@ -2,9 +2,10 @@ package repo
 
 import (
 	"fmt"
-	"os"
+	"io/fs"
 
 	"github.com/dhrdlicka/errorbot/winerror"
+	yamldata "github.com/dhrdlicka/errorbot/yaml"
 	"gopkg.in/yaml.v3"
 )
 
@@ -14,7 +15,7 @@ type HResultRepo struct {
 }
 
 func LoadHResults(name string) (HResultRepo, error) {
-	file, err := os.ReadFile(name)
+	file, err := fs.ReadFile(yamldata.FS, name)
 
 	if err != nil {
 		return HResultRepo{}, err

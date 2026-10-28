@@ -2,9 +2,10 @@ package repo
 
 import (
 	"fmt"
-	"os"
+	"io/fs"
 
 	"github.com/dhrdlicka/errorbot/winerror"
+	yamldata "github.com/dhrdlicka/errorbot/yaml"
 	"gopkg.in/yaml.v3"
 )
 
@@ -14,7 +15,7 @@ type NTStatusRepo struct {
 }
 
 func LoadNTStatuses(name string) (NTStatusRepo, error) {
-	file, err := os.ReadFile(name)
+	file, err := fs.ReadFile(yamldata.FS, name)
 
 	if err != nil {
 		return NTStatusRepo{}, err

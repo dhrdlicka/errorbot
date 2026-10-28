@@ -10,25 +10,25 @@ type Repo struct {
 func Load() (Repo, error) {
 	var err error
 
-	ntStatuses, err := LoadNTStatuses("yaml/ntstatus.yml")
+	ntStatuses, err := LoadNTStatuses("ntstatus.yml")
 
 	if err != nil {
 		return Repo{}, err
 	}
 
-	hResults, err := LoadHResults("yaml/hresult.yml")
+	hResults, err := LoadHResults("hresult.yml")
 
 	if err != nil {
 		return Repo{}, err
 	}
 
-	win32Errors, err := LoadWin32Errors("yaml/win32error.yml")
+	win32Errors, err := LoadWin32Errors("win32error.yml")
 
 	if err != nil {
 		return Repo{}, err
 	}
 
-	bugChecks, err := LoadBugChecks("yaml/bugcheck.yml")
+	bugChecks, err := LoadBugChecks("bugcheck.yml")
 
 	if err != nil {
 		return Repo{}, err

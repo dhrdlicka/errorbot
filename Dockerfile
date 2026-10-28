@@ -11,6 +11,5 @@ FROM alpine
 WORKDIR /app
 
 COPY --from=builder /app/errorbot /app/errorbot
-COPY ./yaml /app/yaml
 
 CMD [ "/app/errorbot" ]

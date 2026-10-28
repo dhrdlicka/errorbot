@@ -2,9 +2,10 @@ package repo
 
 import (
 	"fmt"
-	"os"
+	"io/fs"
 	"strings"
 
+	yamldata "github.com/dhrdlicka/errorbot/yaml"
 	"gopkg.in/yaml.v3"
 )
 
@@ -19,7 +20,7 @@ type BugCheck struct {
 type BugCheckRepo []BugCheck
 
 func LoadBugChecks(name string) (BugCheckRepo, error) {
-	file, err := os.ReadFile(name)
+	file, err := fs.ReadFile(yamldata.FS, name)
 
 	if err != nil {
 		return nil, err
